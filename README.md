@@ -24,6 +24,9 @@ All that being said, for now I have written the following examples:
 - `examples/input.s`: it reads the input from the first controller and it
   increments a counter stored in memory for each press of the right arrow
   button.
+- `examples/sprites`: shows a sprite with a background on screen. This is a
+  detailed explanation on how all this magic can happen, with a very basic
+  example and all those "magic" numbers explained.
 
 ## License
 

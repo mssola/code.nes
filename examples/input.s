@@ -1,4 +1,4 @@
-;;;
+;;
 ;; This example shows how to read from one controller and set it into the $20
 ;; memory address. The `Main` subroutine will call the `ReadController`
 ;; subroutine and then increment the value on $42 if the right arrow was
@@ -10,8 +10,68 @@
 ;;  - $42: the counter which is incremented on each press of the right arrow button.
 ;;;
 
-.export Main
+;;;
+;; You can safely ignore all of this up until the `ReadController` subroutine.
+;; This is boilerplate that is explained on the `sprite.s` example.
+;;;
+
+.segment "HEADER"
+    .byte 'N', 'E', 'S', $1A
+    .byte $02
+    .byte $01
+    .byte $00
+    .byte $00
+
+.segment "VECTORS"
+  .addr nmi
+  .addr reset
+  .addr irq
+
+.segment "STARTUP"
+
 .segment "CODE"
+
+nmi:
+irq:
+  rti
+
+reset:
+    sei
+    cld
+    ldx #$40
+    stx $4017
+
+    ldx #$ff
+    txs
+
+    inx
+    stx $2000
+    stx $2001
+    stx $4010
+
+@vblankwait1:
+    bit $2002
+    bpl @vblankwait1
+
+    ldx #0
+    lda #0
+@ram_reset_loop:
+    sta $000, x
+    sta $100, x
+    sta $200, x
+    sta $300, x
+    sta $400, x
+    sta $500, x
+    sta $600, x
+    sta $700, x
+    inx
+    bne @ram_reset_loop
+
+@vblankwait2:
+    bit $2002
+    bpl @vblankwait2
+
+    jmp main
 
 .proc ReadController
   ;; The status of the eight buttons fits into a single byte. We start the whole
@@ -61,13 +121,12 @@ read_loop:
   rts
 .endproc
 
-;; The main function will run indefinitely (we don't want to be on the infinite
-;; loop from the wrapper.s file which includes this function). It will
-;; continuously poll from the controller and increment the value on $42 each
-;; time the user performs a new press on the right arrow (that is, we want to
-;; count new presses on this button, and we don't want to increment this value
-;; while the right arrow is being pressed).
-.proc Main
+;; The main function will run indefinitely and it will continuously poll from
+;; the controller and increment the value on $42 each time the user performs a
+;; new press on the right arrow (that is, we want to count new presses on this
+;; button, and we don't want to increment this value while the right arrow is
+;; being pressed).
+.proc main
   ;; Initialize the value on $21 (previous state) and on $42 (counter).
   lda #0
   sta $42
@@ -102,9 +161,10 @@ pressed:
   inc $21
   inc $42
 
-  ;; We don't want to ever return into the `wrapper.s` file: go back into our
-  ;; loop.
+  ;; There and back again.
   jmp loop
 
   rts
 .endproc
+
+.segment "CHARS"

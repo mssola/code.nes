@@ -17,7 +17,7 @@ deps:
 	@which $(CC65) >/dev/null 2>/dev/null || (echo "ERROR: $(CC65) not found." && false)
 
 .PHONY: build
-build: out/input.nes
+build: out/input.nes out/sprite.nes
 
-out/input.nes: examples/input.s examples/wrapper.s
-	$(CC65) $(CCOPTS) examples/input.s examples/wrapper.s -o $@
+out/%.nes: examples/%.s
+	$(CC65) $(CCOPTS) $< -o $@
