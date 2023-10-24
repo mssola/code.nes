@@ -1,4 +1,4 @@
-;;
+;;;
 ;; This example shows how to read from one controller and set it into the $20
 ;; memory address. The `Main` subroutine will call the `ReadController`
 ;; subroutine and then increment the value on $42 if the right arrow was

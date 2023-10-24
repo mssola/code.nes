@@ -15,23 +15,32 @@ way, the resulting ROMs will be placed in the `out` directory.
 After that, it's recommended that you run the ROMs with an emulator with
 debugging support or at least some form of memory visualization. This is because
 some examples have nothing to show for other than updating some values on the
-NES memory. A safe bet is to go with [fceux](https://fceux.com/web/home.html),
-which works on all major platforms and provides tools like RAM watchers or a
-full debugger.
+NES memory. A safe bet is to go with either
+[fceux](https://fceux.com/web/home.html) or
+[Mesen](https://github.com/SourMesen/Mesen2/), which provide tools like RAM
+watchers or a full debugger.
 
-All that being said, for now I have written the following examples:
+The examples are distributed like this:
 
-- `examples/input.s`: it reads the input from the first controller and it
-  increments a counter stored in memory for each press of the right arrow
-  button.
-- `examples/sprites`: shows a sprite with a background on screen. This is a
-  detailed explanation on how all this magic can happen, with a very basic
-  example and all those "magic" numbers explained.
+- `basics`: simple examples which cover basic stuff for NES development. These
+  examples are self-contained and supposed to be read by absolute newcomers. The
+  description for each example is covered by an initial comment on each file.
+- `space`: example in which you can move a spaceship with subpixel movement and
+  shoot bullets.
+- `scroll`: different scrolling tactics. Read the
+  [scroll/README.md](./scroll/README.md) file for more info.
+
+Other than that, I have also written complete games. Take a look at
+[jetpac.nes](https://github.com/mssola/jetpac.nes), which is simple enough so a
+newcomer can read it, but complex enough so it's an actual game.
 
 ## License
 
 Released under the [GPLv3+](http://www.gnu.org/licenses/gpl-3.0.txt), Copyright
 (C) 2023-<i>Ω</i> Miquel Sabaté Solà.
 
-There are some files which I have taken from other people (e.g.
-`examples/wrapper.s`). Take a look at each file for the specifics.
+I have taken lots of ideas from different developers and open source projects.
+Most notably, I have taken lots of notes from the [Famicom Party
+Book](https://famicom.party/book/),
+[NESHacker](https://www.youtube.com/c/neshacker) and, of course, from the
+awesome [NES Dev wiki](https://www.nesdev.org/wiki/Nesdev_Wiki).

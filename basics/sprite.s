@@ -1,4 +1,8 @@
 ;;;
+;; Show a sprite to the screen! This example also contains fully detailed
+;; explanations on each section on how an NES game is initialized and stored.
+
+;;;
 ;; The iNES is the de facto standard for the distribution of NES binary programs
 ;; and it's compatible with the format used by NES cartridges themselves (used,
 ;; even, by the Wii Virtual Console). The layout is composed by segments in
@@ -230,8 +234,8 @@ reset:
     ;; memory? The NES allows developers to store eight palettes (four
     ;; background, four foreground), and each palette group four colors. This
     ;; way, whenever we want to draw a sprite or a piece of background, we don't
-    ;; specify which colors to pick for each pixels, but we rather apply a
-    ;; palette to a srite or background tile definition.
+    ;; specify which colors to pick for each pixel, but we rather apply a
+    ;; palette to a sprite or background tile definition.
     lda #$3F
     sta $2006                   ; PPUADDR
     lda #$00
@@ -271,17 +275,6 @@ reset:
     jsr init_palettes
     jsr init_nametable
     jsr init_sprites
-
-    ;; Reset scroll. This could have been done in the reset process, but
-    ;; scrolling feels like something that should be in control entirely by the
-    ;; game itself. Any ways, the scroll is handled through the $2005
-    ;; (PPUSCROLL) memory address. We first need to write the X coordinate and
-    ;; then the Y coordinate for the camera. Since we are not planning on doing
-    ;; anything fancy with scrolling, we just initialize it to a zero position.
-    bit $2002                   ; PPUSTATUS
-    lda #$00
-    sta $2005                   ; PPUSCROLL
-    sta $2005                   ; PPUSCROLL
 
     ;; Remember when we disabled rendering and NMI on the reset code? Now it's
     ;; time to enable them back. Things to note:
@@ -430,11 +423,13 @@ palettes:
     ;; offset for the first element was $00C8, which added to the base address
     ;; of $2000 (start of the first nametable), gives us the address $20C8.
     ;; Therefore, if I want this background element to be rendered in the
-    ;; position I envisioned on this tool, I need to write $20C8 into PPUADDR.
-    ;; As for the PPUDATA address, I need to pass #$02 because that's the index
-    ;; inside of the CHR file of the star in the second pattern table (check the
-    ;; PPUCTRL setting at the end of the `main` function on why it's the second
-    ;; pattern table).
+    ;; position I envisioned on this tool, I need to write $20C8 into PPUADDR
+    ;; (NOTE: these are a total of two bytes to be loaded, for operations that
+    ;; only support one byte at a time. Hence, we have to load byte by byte (in
+    ;; little-endian format) and store them. As for the PPUDATA address, I need
+    ;; to pass #$02 because that's the index inside of the CHR file of the star
+    ;; in the second pattern table (check the PPUCTRL setting at the end of the
+    ;; `main` function on why it's the second pattern table).
     lda #$20
     sta $2006                   ; PPUADDR
     lda #$C8
@@ -540,6 +535,17 @@ nmi:
     bit $20
     bpl @next
 
+    ;; An NMI can happen at any time. Hopefully whenever that happens we are
+    ;; already done with the main code, so replacing the current value of
+    ;; registers isn't that big of a deal, but it's considered good practice to
+    ;; not assume that (e.g. a particular frame being too laggy). Because of
+    ;; this, we backup registers now and we restore them at the end.
+    pha
+    txa
+    pha
+    tya
+    pha
+
     ;; We are instructed that we can start rendering stuff. Transfer the sprites
     ;; via OAM. This is the same we did when we resetted sprites in our `reset`
     ;; code.
@@ -548,10 +554,28 @@ nmi:
     lda #$02
     sta $4014                   ; OAMDMA
 
+    ;; Reset the scroll. This is needed because we have touched the PPUADDR in
+    ;; multiple places. Touching the PPUADDR memory address will also toggle the
+    ;; PPUSCROLL one because they share a register on hardware. Because of this,
+    ;; we always need to reset the scroll back to the coordinates we want, and
+    ;; we do it right here, when everything has already been sent and we are
+    ;; done.
+    bit $2002                   ; PPUSTATUS
+    lda #$00
+    sta $2005                   ; PPUSCROLL
+    sta $2005                   ; PPUSCROLL
+
     ;; And unset the render flag so the `main` code is unblocked.
     lda #%01111111
     and $20
     sta $20
+
+    ;; Restore registers.
+    pla
+    tay
+    pla
+    tax
+    pla
 @next:
     rti
 
@@ -574,4 +598,4 @@ irq:
 ;; of the scope of this file and my expertise, to be honest.
 ;;;
 .segment "CHARS"
-    .incbin "../assets/basic.chr"
+    .incbin "assets/basic.chr"
