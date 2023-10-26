@@ -20,6 +20,7 @@ build: basics space
 basics:
 	$(CC65) $(CCOPTS) basics/sprite.s -o out/basics/sprite.nes
 	$(CC65) $(CCOPTS) basics/input.s -o out/basics/input.nes
+	$(CC65) $(CCOPTS) basics/persist.s -o out/basics/persist.nes
 
 .PHONY: space
 space:

@@ -30,9 +30,8 @@
     .byte 'N', 'E', 'S', $1A
 
     ;; The next two bytes define the size of the PRG and CHR ROMs in this order.
-    ;; More specifically, they define how many 8KB banks are available for PRG
-    ;; and CHR. Hence, the next two bytes define a 16KB (2x 8KB) of PRG-ROM, and
-    ;; 8KB of CHR-ROM.
+    ;; Hence, the next two bytes define a 32KB (2 x 16KB) of PRG-ROM, and 8KB
+    ;; (1 x 8KB) of CHR-ROM.
     .byte $02
     .byte $01
 
