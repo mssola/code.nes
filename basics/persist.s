@@ -103,10 +103,10 @@ reset_mmc1:
     ;;               That's why it did not really matter what we had at the iNES
     ;;               header: mirroring is programmatically set, not
     ;;               hardware-bound.
-    ;;   - bit 2: we have two regions: $8000-$BFFF and $C000-$FFFF. This bit
-    ;;            configures which one of them is fixed and which can be
-    ;;            swapped. We set this bit to one, meaning that $8000-$BFFF is
-    ;;            swappable while the other is fixed to the last bank of PRG.
+    ;;   - bit 2: we have two regions (see bit 3): $8000-$BFFF and $C000-$FFFF.
+    ;;            This bit configures which one of them is fixed and which can
+    ;;            be swapped. We set this bit to one, meaning that $8000-$BFFF
+    ;;            is swappable while the other is fixed to the last bank of PRG.
     ;;   - bit 3: swappable PRG size. If set to 0, then 32KB of memory is
     ;;            assumed, and thus bit 2 is ignored (i.e. the whole thing is to
     ;;            be swapped at once). Otherwise, if set to 1, then 16KB is

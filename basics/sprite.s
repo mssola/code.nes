@@ -49,9 +49,8 @@
 
     ;; The previous are the mandatory bytes in order to get a "cartridge" going.
     ;; After this there are some other bytes you can put into the header, like
-    ;; if the "cartridge" counts on a battery-backed RAM-mapped section to save
-    ;; states (e.g. The Legend of Zelda) or rare flags like specifying the
-    ;; region (NTSC vs PAL), but for now this falls out of my radar :-)
+    ;; specifying the region (NTSC vs PAL), but for now this falls out of my
+    ;; radar :-)
 
 ;;;
 ;; This is the segment where we tell the processor where to find the code for
@@ -422,8 +421,8 @@ palettes:
     ;; offset for the first element was $00C8, which added to the base address
     ;; of $2000 (start of the first nametable), gives us the address $20C8.
     ;; Therefore, if I want this background element to be rendered in the
-    ;; position I envisioned on this tool, I need to write $20C8 into PPUADDR
-    ;; (NOTE: these are a total of two bytes to be loaded, for operations that
+    ;; position I envisioned on this tool, I need to write $20C8 into PPUADDR.
+    ;; NOTE: these are a total of two bytes to be loaded, for operations that
     ;; only support one byte at a time. Hence, we have to load byte by byte (in
     ;; little-endian format) and store them. As for the PPUDATA address, I need
     ;; to pass #$02 because that's the index inside of the CHR file of the star
