@@ -11,6 +11,10 @@
 ;; Last but not least, all of this is done thanks to the MMC1 chip. Thus, this
 ;; file is also a minimalistic example on how to configure it, even if it
 ;; doesn't take full advantage of it (e.g. we are not doing any bank switching).
+;; Because of this, note that we are not using a proper linker configuration for
+;; it (I'm using cc65's default, which is tailored for NROM chips). Thus, bank
+;; switching will actually never work under this setup. Bank switching is
+;; covered through other examples like `basics/unrom.s`.
 
 .segment "HEADER"
     .byte 'N', 'E', 'S', $1A

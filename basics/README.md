@@ -13,3 +13,4 @@ Anyhow, these programs are as follows:
   to get a detailed explanation on each section.
 - `input.s`: how to read the input from one controller.
 - `persist.s`: using the MMC1 chip in order to persist data.
+- `unrom.s`: bank switching using the UNROM chip.

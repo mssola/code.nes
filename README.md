@@ -20,6 +20,17 @@ NES memory. A safe bet is to go with either
 [Mesen](https://github.com/SourMesen/Mesen2/), which provide tools like RAM
 watchers or a full debugger.
 
+Notice that I will use some terms without actually introducing them. That is, I
+expect you to go over the [NES Dev
+wiki](https://www.nesdev.org/wiki/Nesdev_Wiki) for glossary or for full
+documentation on the stuff being shown here. For example, if I am writing an
+example code using the UNROM or the MMC1 chips, I assume that you will go over
+the [NES Dev wiki](https://www.nesdev.org/wiki/Nesdev_Wiki) for details on what
+these chips actually are or how they were used. That is, if you find that on a
+bunch of comments I write stuff like "memory mapper", "MMC3 chip", "OAM" or
+stuff like that, just go to the [NES Dev
+wiki](https://www.nesdev.org/wiki/Nesdev_Wiki) to get a better picture.
+
 The examples are distributed like this:
 
 - `basics`: simple examples which cover basic stuff for NES development. These
