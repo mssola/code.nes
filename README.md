@@ -20,8 +20,8 @@ NES memory. A safe bet is to go with either
 [Mesen](https://github.com/SourMesen/Mesen2/), which provide tools like RAM
 watchers or a full debugger.
 
-Notice that I will use some terms without actually introducing them. That is, I
-expect you to go over the [NES Dev
+Notice also that I will use some terms without actually introducing them. That
+is, I expect you to go over the [NES Dev
 wiki](https://www.nesdev.org/wiki/Nesdev_Wiki) for glossary or for full
 documentation on the stuff being shown here. For example, if I am writing an
 example code using the UNROM or the MMC1 chips, I assume that you will go over

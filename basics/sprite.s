@@ -185,10 +185,11 @@ reset:
     inx
     bne @ram_reset_loop         ; if x overflows back to #00, then we are done.
 
-    ;; And now another thing we can do is to reset the sprites. In NES programs
-    ;; sprites live in a special range of memory addresses from the RAM called
-    ;; OAM (Object Attribute Memory). This range is located in $0200-02ff (the
-    ;; range we did not initialize when cleaning up RAM).
+    ;; And now another thing we can do is to reset the sprites. We will reserve
+    ;; space for sprites in $0200-02ff (the range we did not initialize when
+    ;; cleaning up RAM). With this in mind we will perform a DMA process right
+    ;; after this block of code that will take this memory range and bulk it
+    ;; into PPU OAM space.
     ;;
     ;; "Resetting sprites" is just a matter of giving them a value which will
     ;; not bother us in the future. One way to do this is to set each value to
@@ -209,8 +210,8 @@ reset:
     ;; the byte given at the OAMADDR, thus XX = #$00; and N = 2 (see `lda
     ;; #$02`). Therefore, we are telling the PPU to start the DMA process from
     ;; $200. The PPU will assume that the following 256 bytes of memory are the
-    ;; ones to be copied, resulting in a DMA copy of $200-$2ff, right where the
-    ;; sprite data is located in memory.
+    ;; ones to be copied, resulting in a DMA copy of $200-$2ff, right where we
+    ;; stored the sprite data in advance.
     lda #$00
     sta $2003                   ; OAMADDR
     lda #$02

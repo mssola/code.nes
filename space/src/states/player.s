@@ -5,28 +5,48 @@
 ;;   -> $0200-$0207: OAM data.
 ;;;
 .scope Player
-    ;; TODO: change names of pos_x and signed_x et al
-    m_pos_x             = $30
-    m_pos_y             = $31
-    m_velocity_x        = $32
-    m_velocity_y        = $33
+    ;; Unsigned screen coordinates on the X axis.
+    m_screen_x = $30
+
+    ;; Unsigned screen coordinates on the Y axis.
+    m_screen_y = $31
+
+    ;; The actual velocity on the X coordinates. This is a signed fixed point
+    ;; 4.4 (high nibble: pixels; low: subpixels).
+    m_velocity_x = $32
+
+    ;; The actual velocity on the Y coordinates. This is a signed fixed point
+    ;; 4.4 (high nibble: pixels; low: subpixels).
+    m_velocity_y = $33
+
+    ;; The target velocity on the X coordinates. This is a signed fixed point
+    ;; 4.4 (high nibble: pixels; low: subpixels).
     m_target_velocity_x = $34
+
+    ;; The target velocity on the Y coordinates. This is a signed fixed point
+    ;; 4.4 (high nibble: pixels; low: subpixels).
     m_target_velocity_y = $35
-    m_signed_x          = $36   ; NOTE !
-    m_signed_y          = $38   ; NOTE !
+
+    ;; Computed position on the X coordinates at the subpixel level. This is a
+    ;; signed fixed point 12.4. NOTE: two bytes!
+    m_position_x = $36
+
+    ;; Computed position on the X coordinates at the subpixel level. This is a
+    ;; signed fixed point 12.4. NOTE: two bytes!
+    m_position_y = $38
 
     ;; Initializes the player by initializing its internal data and loading some
     ;; values of the sprite itself.
     .proc init
         ;; Initialize position + subpixel.
         lda #$B0
-        sta m_signed_y
+        sta m_position_y
         lda #$00
-        sta m_signed_y + 1
+        sta m_position_y + 1
         lda #$7A
-        sta m_signed_x
+        sta m_position_x
         lda #$F0
-        sta m_signed_x + 1
+        sta m_position_x + 1
 
         ;; Initialize velocity.
         lda #0
@@ -34,21 +54,6 @@
         sta m_velocity_y
         sta m_target_velocity_x
         sta m_target_velocity_y
-
-        ;; The player itself is built with two identical sprites placed side by
-        ;; side, where the second one is flipped horizontally. Thus, the player
-        ;; takes up the first two slots on OAM data ($0200-$0207). Here we only
-        ;; need to select the sprite and the attributes, since the position will
-        ;; be updated on each game loop. Hence, here we select the sprite
-        ;; located at #0 on the pattern table, and then we set for the second
-        ;; one the horizontal flip bit for the attributes.
-        lda #0
-        sta $0201               ; First sprite select.
-        sta $0205               ; Second sprite select.
-        lda #%00000000
-        sta $0202               ; First sprite attributes.
-        lda #%01000000
-        sta $0206               ; Second sprite attributes.
 
         rts
     .endproc
@@ -87,7 +92,6 @@
             lda positive_velocity, x
             sta m_target_velocity_x
             jmp @target_check_up
-
         @target_check_left:
             ;; Similar to before: if it was not pressed, then set the target
             ;; velocity to 0, otherwise set the proper value and jump to the up
@@ -98,14 +102,11 @@
             lda negative_velocity, x
             sta m_target_velocity_x
             jmp @target_check_up
-
         @target_no_x:
             ;; None of the buttons on the X-axis were pressed. Set the target
             ;; velocity to 0.
             lda #0
             sta m_target_velocity_x
-            ;; NOTE: walkthrough
-
         @target_check_up:
             ;; Same as before but we return early if it was pressed, otherwise
             ;; we go into the arrow-down check.
@@ -115,7 +116,6 @@
             lda negative_velocity, x
             sta m_target_velocity_y
             rts
-
         @target_check_down:
             ;; If down was not pressed, go to the "no_y" case, otherwise return
             ;; early after setting the proper Y target velocity.
@@ -125,26 +125,21 @@
             lda positive_velocity, x
             sta m_target_velocity_y
             rts
-
         @target_no_y:
             ;; None of the buttons on the Y-axis were pressed. Set the target
             ;; velocity to 0.
             lda #0
             sta m_target_velocity_y
             rts
-
-        ;; TODO
         positive_velocity:
-    ;; $18: 0001 | 1000
-    ;; $28: 0010 | 1000
             .byte $18, $28
         negative_velocity:
-    ;; $E8: 1110 | 1000
-    ;; $D8: 1101 | 1000
             .byte $E8, $D8
         .endproc
 
-    ;; TODO: give it a closer look
+        ;; Increase the current velocity on each axis so to match the target
+        ;; velocity on each case. Note that the velocity is simply increased by
+        ;; one. A more detailed code could be more nuanced than this.
         .proc accelerate
             lda m_velocity_x
             sec
@@ -173,72 +168,70 @@
             rts
         .endproc
 
-    ;; TODO: give it a closer look
+        ;; Apply the currently computed velocity to the position at subpixel
+        ;; level.
         .proc apply_velocity
             lda m_velocity_x
             bmi @apply_negative_velocity_x
 
             clc
-            adc m_signed_x
-            sta m_signed_x
+            adc m_position_x
+            sta m_position_x
             lda #0              ;NOTE: adding possible carry!
-            adc m_signed_x + 1
-            sta m_signed_x + 1
+            adc m_position_x + 1
+            sta m_position_x + 1
             jmp @apply_velocity_y
-
         @apply_negative_velocity_x:
             lda #0
             sec
             sbc m_velocity_x
             sta $00
-            lda m_signed_x
+            lda m_position_x
             sec
             sbc $00
-            sta m_signed_x
-            lda m_signed_x + 1
+            sta m_position_x
+            lda m_position_x + 1
             sbc #0
-            sta m_signed_x + 1
-            ;; NOTE: walkthrough
-
+            sta m_position_x + 1
         @apply_velocity_y:
             lda m_velocity_y
             bmi @apply_negative_velocity_y
 
             clc
-            adc m_signed_y
-            sta m_signed_y
+            adc m_position_y
+            sta m_position_y
             lda #0
-            adc m_signed_y + 1
-            sta m_signed_y + 1
+            adc m_position_y + 1
+            sta m_position_y + 1
             rts
-
         @apply_negative_velocity_y:
             lda #0
             sec
             sbc m_velocity_y
             sta $00
-            lda m_signed_y
+            lda m_position_y
             sec
             sbc $00
-            sta m_signed_y
-            lda m_signed_y + 1
+            sta m_position_y
+            lda m_position_y + 1
             sbc #0
-            sta m_signed_y + 1
+            sta m_position_y + 1
             rts
         .endproc
 
+        ;; Translate the position at subpixel level to actual screen coordinates.
         .proc position_to_coordinates
             jsr position_to_coordinates_x
             jsr position_to_coordinates_y
-
             rts
         .endproc
 
+        ;; Translate the X position at subpixel level to actual screen coordinates.
         .proc position_to_coordinates_x
             ;; Convert the fixed point position coordinate into screen coordinates
-            lda m_signed_x
+            lda m_position_x
             sta $00
-            lda m_signed_x + 1
+            lda m_position_x + 1
             sta $01
             lsr $01
             ror $00
@@ -250,7 +243,7 @@
             ror $00
             ; Assume that everything is fine and save the sprite position
             lda $00
-            sta m_pos_x
+            sta m_screen_x
 
             lda m_velocity_x
             bmi @position_from_negative_velocity
@@ -263,32 +256,33 @@
             rts
         @bound_upper_x:
             lda #$EF
-            sta m_pos_x
+            sta m_screen_x
             lda #$0E
-            sta m_signed_x + 1
+            sta m_position_x + 1
             lda #$F0
-            sta m_signed_x
+            sta m_position_x
             lda #0
             sta m_velocity_x
             rts
         @position_from_negative_velocity:
-            lda m_signed_x + 1
+            lda m_position_x + 1
             bmi @bound_lower_x
             rts
         @bound_lower_x:
             lda #0
-            sta m_signed_x
-            sta m_signed_x + 1
-            sta m_pos_x
+            sta m_position_x
+            sta m_position_x + 1
+            sta m_screen_x
             sta m_velocity_x
             rts
         .endproc
 
+        ;; Translate the Y position at subpixel level to actual screen coordinates.
         .proc position_to_coordinates_y
             ;; Convert the fixed point position coordinate into screen coordinates
-            lda m_signed_y
+            lda m_position_y
             sta $00
-            lda m_signed_y + 1
+            lda m_position_y + 1
             sta $01
             lsr $01
             ror $00
@@ -300,7 +294,7 @@
             ror $00
             ; Assume that everything is fine and save the sprite position
             lda $00
-            sta m_pos_y
+            sta m_screen_y
 
             lda m_velocity_y
             bmi @position_from_negative_velocity_y
@@ -313,23 +307,23 @@
             rts
         @bound_upper_y:
             lda #$EF
-            sta m_pos_y
+            sta m_screen_y
             lda #$0E
-            sta m_signed_y + 1
+            sta m_position_y + 1
             lda #$F0
-            sta m_signed_y
+            sta m_position_y
             lda #0
             sta m_velocity_y
             rts
         @position_from_negative_velocity_y:
-            lda m_signed_y + 1
+            lda m_position_y + 1
             bmi @bound_lower_y
             rts
         @bound_lower_y:
             lda #0
-            sta m_signed_y
-            sta m_signed_y + 1
-            sta m_pos_y
+            sta m_position_y
+            sta m_position_y + 1
+            sta m_screen_y
             sta m_velocity_y
             rts
         .endproc
@@ -340,15 +334,43 @@
         ;; Update the sprite on OAM memory according to what we have in the
         ;; internal data stored in $30-$3F.
         .proc update
-            lda m_pos_y
+            ;; Update Y position.
+            lda m_screen_y
             sta $200
             sta $204
 
-            lda m_pos_x
+            ;; Update X position.
+            lda m_screen_x
             sta $203
             clc
             adc #8
             sta $207
+
+            ;; If we have a target velocity, then we will show some fire,
+            ;; otherwise we keep the basic ship.
+            lda m_target_velocity_x
+            bne @fire
+            lda m_target_velocity_y
+            bne @fire
+            lda #0
+            jmp @sprite_set
+        @fire:
+            lda #2
+        @sprite_set:
+            ;; The player itself is built with two identical sprites placed side
+            ;; by side, where the second one is flipped horizontally. Thus, the
+            ;; player takes up the first two slots on OAM data ($0200-$0207).
+            ;; Here we only need to select the sprite and the attributes, since
+            ;; the position will be updated on each game loop. Hence, here we
+            ;; select the sprite as indexed by the value set on the `a` register
+            ;; on the pattern table, and then we set for the second one the
+            ;; horizontal flip bit for the attributes.
+            sta $0201               ; First sprite select.
+            sta $0205               ; Second sprite select.
+            lda #%00000000
+            sta $0202               ; First sprite attributes.
+            lda #%01000000
+            sta $0206               ; Second sprite attributes.
 
             rts
         .endproc

@@ -1,23 +1,14 @@
 ;;;
-;;; TODO: reduce the scope of this to just:
-;;;   - Movement through subpixels.
-;;;   - Shooting (no collision or anything)
-;;; -> link to jetpac.nes for more stuff
-;;;
-;; This is similar to the sprite.s example, but it expands on it greatly into a
-;; full game by:
-;;   - Having a moving background.
+;; This is similar to the basics/sprite.s example, but it expands a bit on it
+;; by:
 ;;   - The ship can be moved:
 ;;     - The movement is done through subpixels for a smoother experience.
 ;;     - The ship's sprites are updated accordingly: resting, acceleration, full
 ;;       speed.
-;;   - Random asteroids will appear from time to time and they can collide with
-;;     the ship:
-;;     - A collision decreases the live status from the ship (cracks will appear
-;;       to the sprite).
-;;     - When the live status reaches 0 -> game over.
-;;   - The ship can shoot and destroy asteroids.
-;;   - There is a score.
+;;   - The ship can shoot
+;;
+;; The subpixel movement is largely based on:
+;; https://github.com/NesHacker/PlatformerMovement.
 ;;;
 
 .segment "HEADER"
@@ -48,6 +39,7 @@
 
 .include "states/game.s"
 .include "states/player.s"
+.include "states/bullets.s"
 .include "vectors/reset.s"
 .include "vectors/nmi.s"
 .include "vectors/irq.s"
@@ -62,12 +54,7 @@
     jsr init_palettes
     jsr init_nametable
     jsr Player::init
-
-    ;; Reset scroll.
-    bit PPU::STATUS
-    lda #$00
-    sta PPU::SCROLL
-    sta PPU::SCROLL
+    jsr Bullets::init
 
     cli
 
@@ -85,6 +72,7 @@
     jsr Joypad::read
     jsr Player::Movement::update
     jsr Player::Sprite::update
+    jsr Bullets::update
 
     ;; This is a hand-shake between the code on `main` and the code on the
     ;; `nmi`. See Game::flags for more.
