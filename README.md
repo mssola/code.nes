@@ -37,7 +37,9 @@ The examples are distributed like this:
   examples are self-contained and supposed to be read by absolute newcomers. The
   description for each example is covered by an initial comment on each file.
 - `space`: example in which you can move a spaceship with subpixel movement and
-  shoot bullets.
+  shoot bullets. Consider this an evolution from the `basics/sprite.s` example.
+  That is, we are no longer just showing a sprite, but we make it move and
+  perform an action like shooting bullets.
 - `scroll`: different scrolling tactics. Read the
   [scroll/README.md](./scroll/README.md) file for more info.
 
