@@ -1,7 +1,7 @@
 ;;;
 ;; Player state: movement, animation, etc. The following memory addresses are
 ;; reserved for the player:
-;;   -> $30-$3F: internal data.
+;;   -> $30-$38: internal data.
 ;;   -> $0200-$0207: OAM data.
 ;;;
 .scope Player

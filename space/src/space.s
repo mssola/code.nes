@@ -5,7 +5,7 @@
 ;;     - The movement is done through subpixels for a smoother experience.
 ;;     - The ship's sprites are updated accordingly: resting, acceleration, full
 ;;       speed.
-;;   - The ship can shoot
+;;   - The ship can shoot bullets.
 ;;
 ;; The subpixel movement is largely based on:
 ;; https://github.com/NesHacker/PlatformerMovement.
@@ -45,8 +45,8 @@
 .include "vectors/irq.s"
 
 ;;;
-;; This is our main subroutine, the reset procedure will call at the very end of
-;; initializing the hardware.
+;; This is our main subroutine, the reset procedure will call it at the very end
+;; of initializing the hardware.
 ;;;
 .proc main
     ;; Before starting the game loop proper we initialize all our assets: load
@@ -69,6 +69,10 @@
     sta PPU::MASK
 
 @main_game_loop:
+    ;; The main game loop leverages the logic to different subroutines. In
+    ;; short: first of all update the values on the joypad, then update the
+    ;; player's movement and sprites, and finally update the bullets'
+    ;; creation/movement.
     jsr Joypad::read
     jsr Player::Movement::update
     jsr Player::Sprite::update

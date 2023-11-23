@@ -11,7 +11,10 @@
 ;; but bear in mind that compilers like `cc65` (the one used here, which is the
 ;; most common) already provide a default configuration for the linker that
 ;; glues a set of pretty common defined named segments. You can read about this
-;; in `cfg/nes.cfg` from inside your cc65 installation.
+;; in `cfg/nes.cfg` from inside your cc65 installation. Otherwise, I have also
+;; written linker configuration files for other examples: take a look, for
+;; instance, at the `config/unrom.cfg` file, which is used by the
+;; `basics/unrom.s` program.
 ;;;
 
 ;;;
@@ -256,7 +259,6 @@ reset:
     sta $2007                   ; PPUDATA
     dex
     bne @palettes_reset_loop
-
 
     ;; At this point everything is clear and with a state we know, now we can
     ;; jump into our main subroutine and start loading sprites, palettes, etc.;
