@@ -5,12 +5,12 @@
 
 ---
 
-This repository consists of some examples on programs for the NES. You can build
-them by just calling `make`. Before doing that, though, you will need a compiler
-for the 6052 platform. A good option is [cc65](https://github.com/cc65/cc65),
-which is available on all major platforms. Otherwise, if you want to use another
-compiler, you can pass the `CC65` and `CCOPTS` variables to the Makefile. Either
-way, the resulting ROMs will be placed in the `out` directory.
+This repository consists of some examples of programs for the NES. You can build
+them by just calling `make` and they will then be available at the `out`
+directory. Before doing that, though, you will need a compiler for the 6052
+platform. A good option is [cc65](https://github.com/cc65/cc65), which is
+available on all major platforms. Otherwise, if you want to use another
+compiler, you can pass the `CC65` and `CCOPTS` variables to the Makefile.
 
 After that, it's recommended that you run the ROMs with an emulator with
 debugging support or at least some form of memory visualization. This is because

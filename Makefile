@@ -11,14 +11,14 @@ clean:
 	@rm -rf out
 	@find . -type f -name "*.o" -delete
 	@find . -type f -name "*.nes" -delete
-	@mkdir -p out/basics
+	@mkdir -p out/basics out/scroll
 
 .PHONY: deps
 deps:
 	@which $(CC65) >/dev/null 2>/dev/null || (echo "ERROR: $(CC65) not found." && false)
 
 .PHONY: build
-build: basics space
+build: basics space scroll
 
 .PHONY: basics
 basics: unrom
@@ -36,3 +36,7 @@ unrom:
 space:
 	@cd space && CC65=$(CC65) CCOPTS="$(CCOPTS)" $(MAKE)
 	@mv space/space.nes out/
+
+.PHONY: scroll
+scroll:
+	$(CC65) $(CCOPTS) scroll/level.s -o out/scroll/level.nes
