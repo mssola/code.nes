@@ -1,6 +1,5 @@
 <p align="center">
   <a href="https://github.com/mssola/NES/actions?query=workflow%3ACI" title="CI status for the main branch"><img src="https://github.com/mssola/NES/workflows/CI/badge.svg" alt="Build Status for main branch" /></a>
-  <a href="http://www.gnu.org/licenses/gpl-3.0.txt" rel="nofollow"><img alt="License GPL 3" src="https://img.shields.io/badge/license-GPL_3-blue.svg" style="max-width:100%;"></a>
 </p>
 
 ---
@@ -42,6 +41,7 @@ The examples are distributed like this:
   perform an action like shooting bullets.
 - `scroll`: different scrolling tactics. Read the
   [scroll/README.md](./scroll/README.md) file for more info.
+- `fx`: miscellanous effects that can be achieved with this humble machine.
 
 Other than that, I have also written complete games. Take a look at
 [jetpac.nes](https://github.com/mssola/jetpac.nes), which is simple enough so a

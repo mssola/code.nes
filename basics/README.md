@@ -19,5 +19,9 @@ and shoot bullets depending on the given input.
 
 Whenever you are done with that, you can then move into other topics like:
 
+- `flicker.s`: flickers sprites which are aligned so they don't disappear due to
+  NES horizontal sprites limit.
 - `persist.s`: using the MMC1 chip in order to persist data.
 - `unrom.s`: bank switching using the UNROM chip.
+- `chr-ram.s`: how to show background and sprites via CHR-RAM instead of
+  CHR-ROM. This is a combination of `sprite.s` and `unrom.s`.

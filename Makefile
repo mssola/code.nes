@@ -1,7 +1,7 @@
-CC65     ?= cl65
-CA65     ?= ca65
-LD65     ?= ld65
-CCOPTS   ?= --verbose --target nes
+CC65   ?= cl65
+CA65   ?= ca65
+LD65   ?= ld65
+CCOPTS ?= --verbose --target nes
 
 .PHONY: all
 all: clean deps build
@@ -21,16 +21,18 @@ deps:
 build: basics space scroll
 
 .PHONY: basics
-basics: unrom
+basics:
 	$(CC65) $(CCOPTS) basics/sprite.s -o out/basics/sprite.nes
 	$(CC65) $(CCOPTS) basics/input.s -o out/basics/input.nes
 	$(CC65) $(CCOPTS) basics/persist.s -o out/basics/persist.nes
 
-.PHONY: unrom
-unrom:
 	$(CA65) $(CCOPTS) basics/unrom.s -o basics/unrom.o
 	$(LD65) basics/unrom.o -C config/unrom.cfg -o out/basics/unrom.nes
 	@rm -f basics/unrom.o
+
+	$(CA65) $(CCOPTS) basics/chr-ram.s -o basics/chr-ram.o
+	$(LD65) basics/chr-ram.o -C config/unrom.cfg -o out/basics/chr-ram.nes
+	@rm -f basics/chr-ram.o
 
 .PHONY: space
 space:

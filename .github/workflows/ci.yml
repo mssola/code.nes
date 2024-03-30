@@ -16,7 +16,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies from Ubuntu sources
-        run: sudo apt-get install cc65 fceux
+        run: |
+          sudo apt-get update
+          sudo apt-get install cc65 fceux
 
       - name: Main task
         run: make
