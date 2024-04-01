@@ -26,7 +26,7 @@
     .addr nmi, reset, irq
 
 .segment "CHARS"
-    .incbin "../assets/space.chr"
+    .incbin "../../assets/space.chr"
 
 .segment "STARTUP"
 

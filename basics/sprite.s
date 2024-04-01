@@ -599,4 +599,4 @@ irq:
 ;; of the scope of this file and my expertise, to be honest.
 ;;;
 .segment "CHARS"
-    .incbin "assets/basic.chr"
+    .incbin "../assets/basic.chr"

@@ -29,7 +29,7 @@
 
 .segment "BANK0"
 
-chr: .incbin "assets/basic.chr"
+chr: .incbin "../assets/basic.chr"
 
 .segment "BANK1"
 .segment "BANK2"
