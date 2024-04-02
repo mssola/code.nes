@@ -8,6 +8,11 @@
 ;;         we are constantly polling it and filling it, the value will move constantly).
 ;;  - $21: the previous status of the right arrow.
 ;;  - $42: the counter which is incremented on each press of the right arrow button.
+;;
+;; Whenever you are done with this example, hop into the `shared/joypad.s` file,
+;; which brings some other considerations when reading from controllers. That
+;; is, the algorithm shown below is not entirely "safe" due to a hardware bug
+;; which might give unreliable inputs on some spikes.
 ;;;
 
 ;;;

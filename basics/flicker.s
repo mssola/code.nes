@@ -36,7 +36,7 @@
 @main_game_loop:
     ;; NOTE: the logic is pretty simply: read the pad, move the player
     ;; accordingly, and apply the flickering effect.
-    jsr Joypad::read
+    jsr joypad_read
     jsr Diskun::update
 
     ;; NOTE: comment this `jsr` out if you want to see what happens if no
