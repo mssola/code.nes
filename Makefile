@@ -1,7 +1,7 @@
 CC65   ?= cl65
 CA65   ?= ca65
 LD65   ?= ld65
-CCOPTS ?= --verbose --target nes
+CCOPTS ?= --target nes
 
 .PHONY: all
 all: clean deps build
@@ -11,7 +11,7 @@ clean:
 	@rm -rf out
 	@find . -type f -name "*.o" -delete
 	@find . -type f -name "*.nes" -delete
-	@mkdir -p out/basics out/scroll
+	@mkdir -p out/basics out/scroll out/space
 
 .PHONY: deps
 deps:
@@ -25,6 +25,7 @@ basics:
 	$(CC65) $(CCOPTS) basics/sprite.s -o out/basics/sprite.nes
 	$(CC65) $(CCOPTS) basics/input.s -o out/basics/input.nes
 	$(CC65) $(CCOPTS) basics/persist.s -o out/basics/persist.nes
+	$(CC65) $(CCOPTS) basics/flicker.s -o out/basics/flicker.nes
 
 	$(CA65) $(CCOPTS) basics/unrom.s -o basics/unrom.o
 	$(LD65) basics/unrom.o -C config/unrom.cfg -o out/basics/unrom.nes
@@ -37,7 +38,7 @@ basics:
 .PHONY: space
 space:
 	@cd space && CC65=$(CC65) CCOPTS="$(CCOPTS)" $(MAKE)
-	@mv space/space.nes out/
+	@mv space/space.nes out/space/
 
 .PHONY: scroll
 scroll:
