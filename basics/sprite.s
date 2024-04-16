@@ -396,6 +396,12 @@ palettes:
 
 ;; init_nametable loads the relevant data to the nametable that is then going to
 ;; be used in order to build up the background.
+;;
+;; NOTE: this function is called after the PPU has been initialized, but NMIs
+;; are still disabled. This is important because you **cannot** write into PPU
+;; data outside of VBlank space (during `nmi` code). If you do so it will result
+;; into rendering glitches. This is better explained at the `scroll` examples,
+;; where VRAM buffering techniques are applied and explained.
 .proc init_nametable
     ;; The general idea here is that the background defaults to the
     ;; "transparent" color, which is the first color on the palette. Then for
@@ -416,21 +422,38 @@ palettes:
     bit $2002                   ; PPUSTATUS
 
     ;; Load the first item for the background! Let's make sense of the values.
+    ;;
     ;; We first need to set the address that the PPU will use (that is, which
-    ;; couple of bytes we need to pass to PPUADDR). This can be tricky, but
-    ;; luckily some tools makes things easier for us. For example, the NEXXT
-    ;; tool allows users to draw a NES screen and then it gives the offset
-    ;; address that you can use for each drawn element. This way I got that the
-    ;; offset for the first element was $00C8, which added to the base address
-    ;; of $2000 (start of the first nametable), gives us the address $20C8.
-    ;; Therefore, if I want this background element to be rendered in the
-    ;; position I envisioned on this tool, I need to write $20C8 into PPUADDR.
-    ;; NOTE: these are a total of two bytes to be loaded, for operations that
-    ;; only support one byte at a time. Hence, we have to load byte by byte (in
-    ;; little-endian format) and store them. As for the PPUDATA address, I need
-    ;; to pass #$02 because that's the index inside of the CHR file of the star
-    ;; in the second pattern table (check the PPUCTRL setting at the end of the
-    ;; `main` function on why it's the second pattern table).
+    ;; couple of bytes we need to pass to PPUADDR). That is: which tile index is
+    ;; to be used from the nametable (read more about PPU Nametables here:
+    ;; https://www.nesdev.org/wiki/PPU_nametables). Think of this as the screen
+    ;; being set as a grid of 8x8 pixels (tile), and each of these tiles is
+    ;; indexed in PPU memory: 960 bytes of actual data, and 64 bytes for the
+    ;; attribute table (see more on attribute tables below). You can draw this
+    ;; by hand by using resources like Morhpcat's developer spreadsheet
+    ;; (https://ko-fi.com/s/ad5d7601e0), based on the ones being used at
+    ;; Nintendo. This is good but there are also handy tools that make things
+    ;; easier for us. For example the NEXXT tool allows users to draw a full NES
+    ;; screen and then it gives the offset address that you can use for each
+    ;; drawn element. I did this and I got that the offset for the first element
+    ;; was $0C8, which added to the base address of $2000 (start of the first
+    ;; nametable), gave me the address $20C8. If you want to make more sense of
+    ;; it by just reading the number, notice that each row has exactly 32 tiles.
+    ;; Thus, you can divide 0x0C8 by 32 and you will get 6.25: that is, on the
+    ;; vertical axis it's the row '6'. Then subtract 0xC8 by 192 (6 rows of 32
+    ;; tiles) to get '8' as the value on the horizontal axis. As you can see,
+    ;; doing things manually can be tedious, that's why people either use a dev
+    ;; spreadsheet or a computer assisted tool.
+    ;;
+    ;; Anyways, if I want this background element to be rendered in the position
+    ;; I envisioned on this tool, I need to write $20C8 into PPUADDR, which adds
+    ;; for a total of two bytes to be loaded for operations that only support
+    ;; one byte at a time. Hence, we have to load byte by byte (in little-endian
+    ;; format) and store them. As for the PPUDATA address, I need to pass #$02
+    ;; because that's the index inside of the CHR file of the star in the second
+    ;; pattern table (check the PPUCTRL setting at the end of the `main`
+    ;; function on why it's the second pattern table). You can check that by
+    ;; opening the `.chr` file for this example on YY-CHR.
     lda #$20
     sta $2006                   ; PPUADDR
     lda #$C8
@@ -453,26 +476,25 @@ palettes:
     ;; Now everything we wanted to write for the background is there, but we
     ;; might want to toggle the colors for some of the elements. You can do this
     ;; with palettes, which for background tiles is done via attribute tables.
-    ;; Each attribute table lives right after each nametable, and it consists of
-    ;; 1KB of memory in which you can establish the palettes to be used for the
-    ;; tiles appearing on the background screen as defined on that specific
-    ;; nametable. Information on this is also given to us by tools like NEXXT.
-    ;; Shortly, for one of the elements I want to change their palette I was
-    ;; told that the "attribute offset" was $03CE. Again, added to the base
-    ;; address, it means that we need to pass $23CE to the PPUADDR. The value
-    ;; for PPUDATA is a bit more tricky: on the attribute table each 8x8 tile is
-    ;; broken down into 4 2-sized squares. Each of these 4 squares of the tile
-    ;; has a palette assigned to it ($00 by default). Thanks to this setup, a
-    ;; single byte can encode four palettes by addressing each square:
-    ;; %44332211. The tool also tells us in which of these smaller squares our
-    ;; element resides. With this info, and since we have two bits available for
-    ;; each of these smaller squares and, therefore, can encode up to 4
-    ;; palettes, it means that we just have to assign either on the range of
-    ;; 00-11 to the pair of bits representing the smaller square that NEXXT is
-    ;; telling us that our background element resides in. In this case it's the
-    ;; first square, so we just need to assign $01 to the bits reserved to this
-    ;; square if I want to change the palette to 1. This is what we pass as a
-    ;; value.
+    ;; Each attribute table lives right after each nametable, in which you can
+    ;; establish the palettes to be used for the tiles appearing on the
+    ;; background screen as defined on that specific nametable. Information on
+    ;; this is also given to us by tools like NEXXT. Shortly, for one of the
+    ;; elements I want to change their palette I was told that the "attribute
+    ;; offset" was $03CE. Again, added to the base address, it means that we
+    ;; need to pass $23CE to the PPUADDR. The value for PPUDATA is a bit more
+    ;; tricky: on the attribute table each 8x8 tile is broken down into 4
+    ;; 2-sized squares. Each of these 4 squares of the tile has a palette
+    ;; assigned to it ($00 by default). Thanks to this setup, a single byte can
+    ;; encode four palettes by addressing each square: %44332211. The tool also
+    ;; tells us in which of these smaller squares our element resides. With this
+    ;; info, and since we have two bits available for each of these smaller
+    ;; squares and, therefore, can encode up to 4 palettes, it means that we
+    ;; just have to assign either on the range of 00-11 to the pair of bits
+    ;; representing the smaller square that NEXXT is telling us that our
+    ;; background element resides in. In this case it's the first square, so we
+    ;; just need to assign $01 to the bits reserved to this square if I want to
+    ;; change the palette to 1. This is what we pass as a value.
     WRITE_PPU_DATA $23CE, %00000001
 
     rts
@@ -529,6 +551,11 @@ initial_sprite_data:
 ;; rendering frame during the Vertical Blanking Interval (VBLANK). This time
 ;; span is pretty tight (around 2273 CPU cycles), so you better update
 ;; everything to be rendered before that if you don't want graphical glitches.
+;;
+;; NOTE: NMI code can be more complex as we want to do more complex stuff, but
+;; we ought to keep things as simple and fast as possible. You can take a look
+;; at the examples from `scroll` for more complex NMI code that have to handle
+;; stuff like VRAM buffering or setting other PPU registers.
 ;;;
 nmi:
     ;; As mentioned on the `main` subroutine, rendering will be skipped until
@@ -595,8 +622,9 @@ irq:
 ;; copy the bitmap that you have generated through a program such as YY-CHR into
 ;; the CHR ROM. Note that not all games used the CHR-ROM for storing their
 ;; assets and instead used the PRG-ROM for that as well (e.g. The Legend of
-;; Zelda). There are multiple technical reasons to do this, but this falls out
-;; of the scope of this file and my expertise, to be honest.
+;; Zelda). Take a look at the `basics/chr-ram.s` example for more. There are
+;; multiple technical reasons to do this, but this falls out of the scope of
+;; this example.
 ;;;
 .segment "CHARS"
     .incbin "../assets/basic.chr"

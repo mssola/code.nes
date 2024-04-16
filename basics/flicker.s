@@ -34,7 +34,7 @@
     sta $2001                   ; PPUMASK
 
 @main_game_loop:
-    ;; NOTE: the logic is pretty simply: read the pad, move the player
+    ;; NOTE: the logic is pretty simple: read the pad, move the player
     ;; accordingly, and apply the flickering effect.
     jsr joypad_read
     jsr Diskun::update
@@ -121,9 +121,9 @@
     adc #4
     sta $40
 
-    ;; We know that that last byte from the last sprite is held at $24F. Thus,
-    ;; if the sprite pointer is already passed this point, we can break the
-    ;; loop. Otherwise just carry on.
+    ;; We know that the last byte from the last sprite is held at $24F. Thus, if
+    ;; the sprite pointer is already passed this point, we can break the loop.
+    ;; Otherwise just carry on.
     cmp #$50
     bne @loop
 

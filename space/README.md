@@ -8,3 +8,5 @@ The movement is done by taking into consideration subpixels. For this, I have
 taken most of the code/idea from [NES
 Hacker](https://github.com/NesHacker/PlatformerMovement). Thus, this part is
 mostly attributed to him.
+
+![space demo](../docs/space.gif)
