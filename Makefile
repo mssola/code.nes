@@ -1,6 +1,13 @@
+V =
+ifeq ($(strip $(V)),)
+	E = @echo
+	Q = @
+else
+	E = @\#
+	Q =
+endif
+
 CC65   ?= cl65
-CA65   ?= ca65
-LD65   ?= ld65
 CCOPTS ?= --target nes
 
 .PHONY: all
@@ -22,24 +29,30 @@ build: basics space scroll
 
 .PHONY: basics
 basics:
-	$(CC65) $(CCOPTS) basics/sprite.s -o out/basics/sprite.nes
-	$(CC65) $(CCOPTS) basics/input.s -o out/basics/input.nes
-	$(CC65) $(CCOPTS) basics/persist.s -o out/basics/persist.nes
-	$(CC65) $(CCOPTS) basics/flicker.s -o out/basics/flicker.nes
+	$(E) "	CC	 basics/sprite"
+	$(Q) $(CC65) $(CCOPTS) basics/sprite.s -o out/basics/sprite.nes
 
-	$(CA65) $(CCOPTS) basics/unrom.s -o basics/unrom.o
-	$(LD65) basics/unrom.o -C config/unrom.cfg -o out/basics/unrom.nes
-	@rm -f basics/unrom.o
+	$(E) "	CC	 basics/input"
+	$(Q) $(CC65) $(CCOPTS) basics/input.s -o out/basics/input.nes
 
-	$(CA65) $(CCOPTS) basics/chr-ram.s -o basics/chr-ram.o
-	$(LD65) basics/chr-ram.o -C config/unrom.cfg -o out/basics/chr-ram.nes
-	@rm -f basics/chr-ram.o
+	$(E) "	CC	 basics/persist"
+	$(Q) $(CC65) $(CCOPTS) basics/persist.s -o out/basics/persist.nes
+
+	$(E) "	CC	 basics/flicker"
+	$(Q) $(CC65) $(CCOPTS) basics/flicker.s -o out/basics/flicker.nes
+
+	$(E) "	CC	 basics/unrom"
+	$(Q) $(CC65) $(CCOPTS) basics/unrom.s -C config/unrom.cfg -o out/basics/unrom.nes
+
+	$(E) "	CC	 basics/chr-ram"
+	$(Q) $(CC65) $(CCOPTS) basics/chr-ram.s -C config/unrom.cfg -o out/basics/chr-ram.nes
 
 .PHONY: space
 space:
-	@cd space && CC65=$(CC65) CCOPTS="$(CCOPTS)" $(MAKE)
-	@mv space/space.nes out/space/
+	$(E) "	CC	 space"
+	$(Q) $(CC65) $(CCOPTS) space/src/space.s -o out/space/space.nes
 
 .PHONY: scroll
 scroll:
-	$(CC65) $(CCOPTS) scroll/level.s -o out/scroll/level.nes
+	$(E) "	CC	 scroll"
+	$(Q) $(CC65) $(CCOPTS) scroll/level.s -o out/scroll/level.nes
