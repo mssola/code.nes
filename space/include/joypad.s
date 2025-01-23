@@ -7,6 +7,28 @@
 ;; the bitmask of the buttons that are pressed from each controller.
 ;;;
 
+;; READ_CONTROLLER reads the input from the controller mapped into the given
+;; port, and saves the state into the given `buttons` address.
+;; Implementation taken from NESHacker's example of smb3-like movement.
+.macro READ_CONTROLLER port, buttons
+    lda Joypad::m_inv_buttons
+    tay
+    lda #1
+    sta port
+    sta Joypad::m_inv_buttons
+    lsr
+    sta port
+:
+    lda port
+    lsr
+    rol Joypad::m_inv_buttons
+    bcc :-
+    tya
+    eor Joypad::m_inv_buttons
+    and Joypad::m_inv_buttons
+    sta buttons
+.endmacro
+
 .scope Joypad
     ;; Button masks.
     BUTTON_A      = 1 << 7
@@ -30,28 +52,6 @@
     m_inv_buttons = $21
     m_buttons1    = $22
     m_buttons2    = $23
-
-    ;; READ_CONTROLLER reads the input from the controller mapped into the given
-    ;; port, and saves the state into the given `buttons` address.
-    ;; Implementation taken from NESHacker's example of smb3-like movement.
-    .macro READ_CONTROLLER port, buttons
-        lda m_inv_buttons
-        tay
-        lda #1
-        sta port
-        sta m_inv_buttons
-        lsr
-        sta port
-    :
-        lda port
-        lsr
-        rol m_inv_buttons
-        bcc :-
-        tya
-        eor m_inv_buttons
-        and m_inv_buttons
-        sta buttons
-    .endmacro
 
     ;; read sets the values for m_buttons1 and m_buttons2 as read from both
     ;; controllers.
