@@ -37,7 +37,8 @@ The examples are distributed like this:
   but we make it move and perform an action like shooting bullets.
 - `scroll`: different scrolling tactics. Read the
   [scroll/README.md](./scroll/README.md) file for more info.
-- `fx`: miscellanous effects that can be achieved with this humble machine.
+- `fx`: simple graphical effects that can be pulled off. Read the
+  [fx/README.md](./fx/README.md) file for more info.
 
 ## Other projects
 
