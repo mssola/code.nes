@@ -32,8 +32,6 @@
   .addr reset
   .addr irq
 
-.segment "STARTUP"
-
 .segment "CODE"
 
 nmi:
@@ -173,3 +171,4 @@ pressed:
 .endproc
 
 .segment "CHARS"
+.byte $00

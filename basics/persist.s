@@ -11,10 +11,9 @@
 ;; Last but not least, all of this is done thanks to the MMC1 chip. Thus, this
 ;; file is also a minimalistic example on how to configure it, even if it
 ;; doesn't take full advantage of it (e.g. we are not doing any bank switching).
-;; Because of this, note that we are not using a proper linker configuration for
-;; it (I'm using cc65's default, which is tailored for NROM chips). Thus, bank
-;; switching will actually never work under this setup. Bank switching is
-;; covered through other examples like `basics/unrom.s`.
+;; A base configuration for this chip can be found in `config/mmc1.cfg`. For
+;; better grasping bank switching though refer to other examples like
+;; `basics/unrom.s`.
 
 .segment "HEADER"
     .byte 'N', 'E', 'S', $1A
@@ -36,9 +35,12 @@
     .addr reset
     .addr irq
 
-.segment "STARTUP"
-.segment "CODE"
+;; Unused. This is the swappable PRG-ROM bank as per `config/mmc1.cfg`.
+.segment "BANK0"
+.byte $00
 
+;; This is the fixed PRG-ROM bank as per `config/mmc1.cfg`.
+.segment "BANK1"
 
 ;; Unused
 nmi:
@@ -65,7 +67,7 @@ reset:
     ;; point to any address range of $8000-$FFFF. If you want to be sure about
     ;; it, you can simply do: `lda #%10000000` and then `sta $8000`. This will
     ;; ensure that the chip is reset. That being said, a micro-optimization can
-    ;; be performed by taking advantage that the "CODE" segment resides above
+    ;; be performed by taking advantage that the "BANK1" segment resides above
     ;; address $8000. Then, you can use the `inc` instruction which first writes
     ;; the old value before the incremented one. All having thus the same effect
     ;; but saving 2 bytes. I know it's somewhat obfuscated and it's done for
@@ -164,4 +166,10 @@ reset_mmc1:
 @loop:
     jmp @loop
 
-.segment "CHARS"
+;; Unused
+.segment "CHR0"
+.byte $00
+
+;; Unused
+.segment "CHR1"
+.byte $00

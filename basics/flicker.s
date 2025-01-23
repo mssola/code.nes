@@ -18,7 +18,6 @@
 .segment "CHARS"
 .incbin "../assets/diskun.chr"
 
-.segment "STARTUP"
 .segment "CODE"
 
 .include "../shared/diskun.s"

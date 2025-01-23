@@ -70,18 +70,20 @@
     .addr irq
 
 ;;;
-;; Required by the default linker configuration. Theoretically there should be a
-;; semantical difference between this section and "CODE", but as for the linker
-;; goes, there is no difference and everything will be put sequentially on the
-;; resulting binary. Hence, if you want (and as I do here), you can leave this
-;; empty (so to make the default configuration of the linker happy), and put
-;; everything into the "CODE" segment. In fact, according to the Famicom Party
-;; Book (https://famicom.party/book/04-hardwareoverview/), the "STARTUP" section
-;; is only used by C programs compiled down into 6502 assembly, so it might not
-;; be even relevant for us (and in fact said book actually removes this segment
-;; in its linker configuration down the road).
+;; The "STARTUP" segment is required by the default linker configuration.
+;; Theoretically there should be a semantical difference between this section
+;; and "CODE", but as for the linker goes, there is no difference and everything
+;; will be put sequentially on the resulting binary. Hence, if you want, you can
+;; leave this empty (so to make the default configuration of the linker happy),
+;; and put everything into the "CODE" segment. In fact, according to the Famicom
+;; Party Book (https://famicom.party/book/04-hardwareoverview/), the "STARTUP"
+;; section is only used by C programs compiled down into 6502 assembly, so it
+;; might not be even relevant for assembly programmers (and in fact said book
+;; actually removes this segment in its linker configuration down the road).
+;; This is also removed by the configuration provided in `config/nrom.cfg`,
+;; which is the one being used in the end for this example.
 ;;;
-.segment "STARTUP"
+;; .segment "STARTUP"
 
 .segment "CODE"
 
@@ -143,7 +145,9 @@ reset:
     ;;;
     ;; NOTE: If you are using a mapper which needs some special configuration,
     ;; now it would be a good time set it up. I am not using a special mapper,
-    ;; so there's nothing from me to do here.
+    ;; so there's nothing from me to do here. Refer to other examples like
+    ;; `basics/persist.s` on how some chips such as MMC1 are set up at this
+    ;; point.
     ;;;
 
     ;; At this point, we have to wait for the PPU to stabilize. This is

@@ -30,16 +30,16 @@ build: basics space scroll
 .PHONY: basics
 basics:
 	$(E) "	CC	 basics/sprite"
-	$(Q) $(CC65) $(CCOPTS) basics/sprite.s -o out/basics/sprite.nes
+	$(Q) $(CC65) $(CCOPTS) basics/sprite.s -C config/nrom.cfg -o out/basics/sprite.nes
 
 	$(E) "	CC	 basics/input"
-	$(Q) $(CC65) $(CCOPTS) basics/input.s -o out/basics/input.nes
+	$(Q) $(CC65) $(CCOPTS) basics/input.s -C config/nrom.cfg -o out/basics/input.nes
 
 	$(E) "	CC	 basics/persist"
-	$(Q) $(CC65) $(CCOPTS) basics/persist.s -o out/basics/persist.nes
+	$(Q) $(CC65) $(CCOPTS) basics/persist.s -C config/mmc1.cfg -o out/basics/persist.nes
 
 	$(E) "	CC	 basics/flicker"
-	$(Q) $(CC65) $(CCOPTS) basics/flicker.s -o out/basics/flicker.nes
+	$(Q) $(CC65) $(CCOPTS) basics/flicker.s -C config/nrom.cfg -o out/basics/flicker.nes
 
 	$(E) "	CC	 basics/unrom"
 	$(Q) $(CC65) $(CCOPTS) basics/unrom.s -C config/unrom.cfg -o out/basics/unrom.nes
@@ -50,9 +50,9 @@ basics:
 .PHONY: space
 space:
 	$(E) "	CC	 space"
-	$(Q) $(CC65) $(CCOPTS) space/src/space.s -o out/space/space.nes
+	$(Q) $(CC65) $(CCOPTS) space/src/space.s -C config/nrom.cfg -o out/space/space.nes
 
 .PHONY: scroll
 scroll:
 	$(E) "	CC	 scroll"
-	$(Q) $(CC65) $(CCOPTS) scroll/level.s -o out/scroll/level.nes
+	$(Q) $(CC65) $(CCOPTS) scroll/level.s -C config/nrom.cfg -o out/scroll/level.nes

@@ -28,8 +28,6 @@
 .segment "CHARS"
     .incbin "../../assets/space.chr"
 
-.segment "STARTUP"
-
 .segment "CODE"
 
 .include "../include/apu.s"
