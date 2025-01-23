@@ -32,11 +32,22 @@
 chr: .incbin "../assets/basic.chr"
 
 .segment "BANK1"
+.byte $00
+
 .segment "BANK2"
+.byte $00
+
 .segment "BANK3"
+.byte $00
+
 .segment "BANK4"
+.byte $00
+
 .segment "BANK5"
+.byte $00
+
 .segment "BANK6"
+.byte $00
 
 ;;;
 ;; Just like in the `basics/unrom.s` example, we use the fixed bank for the core

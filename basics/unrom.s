@@ -69,10 +69,19 @@ hello_bank1:
 ;; The rest of the banks are simply not used by this example.
 
 .segment "BANK2"
+.byte $00
+
 .segment "BANK3"
+.byte $00
+
 .segment "BANK4"
+.byte $00
+
 .segment "BANK5"
+.byte $00
+
 .segment "BANK6"
+.byte $00
 
 ;;;
 ;; And the following code is "fixed". That is, it is stored at $C000-$FFFF,
