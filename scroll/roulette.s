@@ -1,6 +1,6 @@
 ;;;
 ;; Divide the screen in three rows and make them move in different
-;; directions/speed. This is achieved thanks to the MMC3 chip (check the
+;; directions/speed. This is achieved thanks to the MMC3 chip (check
 ;; `fx/blink.s` for further information on this chip). In particular, we are
 ;; using the scanline IRQ mechanism provided by this chip to react to different
 ;; parts of the screen being rendered:
@@ -208,7 +208,7 @@ reset:
     ;; NOTE: enable back interrupts so we can set them up later on `nmi` code.
     cli
 
-    lda #%10010000
+    lda #%10001000
     sta $2000
     lda #%00011110
     sta $2001
@@ -386,9 +386,9 @@ nmi:
     ldx #$00
     stx MMC3::IRQ_DISABLE
 
-    ;; The screen is made up of 240 scan lines. Since we are dividing the screen
-    ;; by 3: 240 / 3 = 80. Hence, the next IRQ should happen on scanline 80,
-    ;; where we would need to update the scroll value through the
+    ;; The screen is made up of 240 visible scan lines. Since we are dividing
+    ;; the screen by 3: 240 / 3 = 80. Hence, the next IRQ should happen on
+    ;; scanline 80, where we would need to update the scroll value through the
     ;; `{center/bottom}_scroll` values instead. Moreover, note that
     ;; `MMC3::IRQ_ENABLE` accepts any value, so the same value as the two other
     ;; registers is just fine.
@@ -493,15 +493,12 @@ irq:
 
     rti
 
-;;; NOTE: pretty much the same as `fx/blink.s` but we also copy the same data on
-;;; the second pattern table as that's the one being used for background
-;;; elements.
+;;; NOTE: pretty much the same as `fx/blink.s`.
 
 .segment "CHARS"
 .incbin "../assets/diskun0.chr"
 .incbin "../assets/diskun1.chr"
-.incbin "../assets/diskun0.chr"
-.incbin "../assets/diskun1.chr"
+.res $1000, $00
 
 ;; The 15 other 8KB portions are left empty.
 .res $2000, $00

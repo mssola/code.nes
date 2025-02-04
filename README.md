@@ -7,7 +7,7 @@ check out [this list](#other-projects).
 
 You can build everything by just calling `make` and binaries will then be
 available in the `out` directory. Before doing that, though, you will need a
-compiler for the 6052 platform. A good option is
+compiler for the 6502 platform. A good option is
 [cc65](https://github.com/cc65/cc65), which is available on all major platforms,
 and if you are feeling adventurous you can check out
 [nasm](https://github.com/mssola/tools.nes). By default the Makefile uses `cc65`

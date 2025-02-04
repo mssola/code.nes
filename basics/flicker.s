@@ -27,7 +27,7 @@
     jsr init_sprites
 
     cli
-    lda #%10010000
+    lda #%10001000
     sta $2000                   ; PPUCTRL
     lda #%00011110
     sta $2001                   ; PPUMASK

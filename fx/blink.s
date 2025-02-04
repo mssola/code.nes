@@ -183,8 +183,9 @@ reset:
     ;; span 4 banks (that is, the first pattern table on the PPU). We have to
     ;; account for that when writing into the first two registers (and that's
     ;; why they are set to 0 and 2 respectively). Other than that, R2-R5 hold
-    ;; which bank goes into the other remaining regions which are 1KB each.
-    ;; Because of this, we can simply assign one 1KB bank to each register.
+    ;; which bank goes into the other remaining regions which are 1KB each
+    ;; (hence, the second pattern table is controlled via R2-R5). Because of
+    ;; this, we can simply assign one 1KB bank to each register.
     ;;
     ;; To sum things up, on this setup the first pattern table is equally
     ;; divided by 2 and it's controlled by R0 and R1 respectively. The second
@@ -246,12 +247,28 @@ reset:
 ;;; NOTE: mainly as usual except that a bit of game loop has been added to
 ;;; handle the blinking state.
 .proc main
+    ;; The code will iterate between banks 4 and 6 on the pattern table, as
+    ;; that's where sprites are located (check the CHARS segment for more info).
+    lda #4
+    sta Vars::last_bank
+
     jsr Diskun::init_palettes
     jsr init_sprites
 
     cli
-    lda #%10010000
+
+    ;; NOTE: This looks like other examples, but here having background tiles on
+    ;; the first pattern table and sprite tiles on the second pattern table is
+    ;; not a matter of personal taste, but there are technical reasons for it.
+    ;; If you check how IRQs work on the MMC3 chip:
+    ;; https://www.nesdev.org/wiki/MMC3#IRQ_Specifics; you will find that on 8x8
+    ;; tile mode having this arrangement actually spares us from a hardware bug.
+    ;; Long story short, placing background tiles first and sprite tiles second
+    ;; make scanline IRQs reliable. Hence, at least on all MMC3 examples, this
+    ;; will be guaranteed.
+    lda #%10001000
     sta $2000
+
     lda #%00011110
     sta $2001
 
@@ -277,17 +294,19 @@ reset:
     lda #0
     sta Vars::counter
 
-    ;; The whole trick is done on R0. So select it.
-    lda #0
+    ;; The whole trick is done on R2, which points to $1000, where the sprite
+    ;; tiles begin. Hence, select it.
+    lda #2
     sta MMC3::BANK_SELECT
 
-    ;; The value for the register is either 0 or 2 depending on its last value.
+    ;; The value for the register is either 4 or 6 depending on its last value.
     lda Vars::last_bank
+    cmp #4
     beq :+
-    lda #0
-    beq @set
+    lda #4
+    jmp @set
 :
-    lda #2
+    lda #6
 @set:
     ;; Save which is the bank being used both internally and onto the MMC3 chip.
     sta Vars::last_bank
@@ -369,14 +388,21 @@ irq:
 ;;; too much for this example, but it's a reasonable size for an MMC3 game.
 ;;; Considering only one pair of pattern tables are available at any given
 ;;; moment (8KB), this means that we need space for 128 / 8 = 16 pairs of
-;;; pattern tables here. For this example the first 8KB are realy only used, and
-;;; the rest are left with a default value ($00).
+;;; pattern tables here. For this example the first 8KB are really only used,
+;;; and the rest are left with a default value ($00).
 
 .segment "CHARS"
-;; First 8KB (note that diskun0.chr and diskun1.chr are both 2KB long)
-.incbin "../assets/diskun0.chr" ; First half of the first pattern table has the default diskun character.
-.incbin "../assets/diskun1.chr" ; Second half of the first pattern table simply has the blinking version.
-.res $1000, $00                 ; Second pattern table is left with the default value.
+;; As explained when initializing the PPUCTRL register ($2000), it's actually
+;; important to place background tiles first and sprite tiles second on the
+;; MMC3. This is guaranteed here by setting the first pattern table as empty (we
+;; have no background on this example, really). The second pattern table is then
+;; filled with `diskun0.chr` and `diskun1.chr`, which are 2KB each. Hence, the
+;; 4th CHR bank contains the regular character, and the 6th CHR bank contains
+;; the blinking version. You can see these values used when initializing
+;; `Vars::last_bank`, or when performing bank switching.
+.res $1000, $00
+.incbin "../assets/diskun0.chr" ; First half of the second pattern table has the default diskun character.
+.incbin "../assets/diskun1.chr" ; Second half of the second pattern table simply has the blinking version.
 
 ;; The 15 other 8KB portions are left empty.
 .res $2000, $00
