@@ -386,17 +386,8 @@ palettes:
     .byte $0F, $00, $00, $00
 .endproc
 
-;; WRITE_PPU_DATA is a macro that will write into PPUADDR the given address and
-;; into PPUDATA the given byte value.
-.macro WRITE_PPU_DATA address, value
-    bit $2002                   ; PPUSTATUS
-    lda #.HIBYTE(address)
-    sta $2006                   ; PPUADDR
-    lda #.LOBYTE(address)
-    sta $2006                   ; PPUADDR
-    lda #value
-    sta $2007                   ; PPUDATA
-.endmacro
+;; Include the WRITE_PPU_DATA macro. More on this below.
+.include "../shared/ppu.s"
 
 ;; init_nametable loads the relevant data to the nametable that is then going to
 ;; be used in order to build up the background.
@@ -468,8 +459,8 @@ palettes:
     ;; Now we have to do the same for the rest of the elements. I have gone
     ;; through the same process of fetching the offset from a canvas I drew on
     ;; NEXXT and here's the result. Instead of repeating te same code over and
-    ;; over but with slightly different values, I am using this macro I created
-    ;; to do the same.
+    ;; over but with slightly different values, I am using the WRITE_PPU_DATA
+    ;; from `shared/ppu.s` to do the same.
     WRITE_PPU_DATA $20B9, $04
     WRITE_PPU_DATA $21CE, $04
     WRITE_PPU_DATA $21BA, $04

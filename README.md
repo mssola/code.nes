@@ -26,19 +26,17 @@ watchers or a full debugger.
 
 The examples are distributed like this:
 
-- `basics`: simple examples which cover basic stuff for NES development. These
-  examples are self-contained and supposed to be read by absolute newcomers. The
-  description for each example is covered by an initial comment on each file,
-  and you can also find more info in the [basics/README.md](./basics/README.md)
-  file.
-- `space`: example in which you can move a spaceship with subpixel movement and
-  shoot bullets. Consider this an evolution from the `basics/sprite.s` and
-  `basics/input.s` examples. That is, we are no longer just showing a sprite,
-  but we make it move and perform an action like shooting bullets.
-- `scroll`: different scrolling tactics. Read the
-  [scroll/README.md](./scroll/README.md) file for more info.
-- `fx`: simple graphical effects that can be pulled off. Read the
-  [fx/README.md](./fx/README.md) file for more info.
+- [basics](./basics/README.md): simple examples which cover basic stuff for NES
+  development. These examples are self-contained and supposed to be read by
+  absolute newcomers. The description for each example is covered by an initial
+  comment on each file.
+- [space](./space/README.md): example in which you can move a spaceship with
+  subpixel movement and shoot bullets. Consider this an evolution from the
+  `basics/sprite.s` and `basics/input.s` examples. That is, we are no longer
+  just showing a sprite, but we make it move and perform an action like shooting
+  bullets.
+- [scroll](./scroll/README.md): different scrolling tactics.
+- [fx](./fx/README.md): simple graphical effects that can be pulled off.
 
 ## Other projects
 

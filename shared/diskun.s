@@ -26,9 +26,9 @@
 
         ;; Background
         .byte DEFAULT_COLOR, $36, $17, $0F
-        .byte DEFAULT_COLOR, $00, $00, $00
-        .byte DEFAULT_COLOR, $00, $00, $00
-        .byte DEFAULT_COLOR, $00, $00, $00
+        .byte DEFAULT_COLOR, $28, $0F, $30
+        .byte DEFAULT_COLOR, $20, $0F, $30
+        .byte DEFAULT_COLOR, $2F, $20, $30
 
         ;; Foreground
         .byte DEFAULT_COLOR, $28, $0F, $30

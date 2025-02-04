@@ -54,8 +54,11 @@ space:
 
 .PHONY: scroll
 scroll:
-	$(E) "	CC	 scroll"
+	$(E) "	CC	 scroll/level"
 	$(Q) $(CC65) $(CCOPTS) scroll/level.s -C config/nrom.cfg -o out/scroll/level.nes
+
+	$(E) "	CC	 scroll/roulette"
+	$(Q) $(CC65) $(CCOPTS) scroll/roulette.s -C config/mmc3.cfg -o out/scroll/roulette.nes
 
 .PHONY: fx
 fx:

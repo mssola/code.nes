@@ -8,8 +8,9 @@
 ;; `basics/unrom`, which also perform bank switching albeit with simpler
 ;; hardware.
 ;;
-;; This examples basically makes use of the bank switching capabilities of the
-;; MMC3 chip, so the handling of IRQs is left to other examples.
+;; This example basically makes use of the bank switching capabilities of the
+;; MMC3 chip, so the handling of IRQs is left to other examples (e.g. see
+;; `scroll/roulette.s`).
 ;;
 ;; On the context of the MMC3 chip, the CPU ROM space is divided into 4 regions
 ;; of 8KB each. Two of these regions are swappable, the rest are fixed. This is
@@ -154,9 +155,9 @@ reset:
     sta MMC3::MIRRORING
 
     ;; Interrupts are a whole topic of their own on the MMC3 chip. Here we just
-    ;; disable them and leave it for other examples. Again, this is tied to a
-    ;; register mapped to a region in memory (even addresses on $E000-$FFFE in
-    ;; this case).
+    ;; disable them and leave it for other examples (e.g. see
+    ;; `scroll/roulette.s`). Again, this is tied to a register mapped to a
+    ;; region in memory (even addresses on $E000-$FFFE in this case).
     sta MMC3::IRQ_DISABLE
 
     ;; PRG RAM can be protected from writes, but this is a feature that many

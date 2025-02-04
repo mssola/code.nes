@@ -15,7 +15,20 @@ information), while allowing the rest of the screen to scroll as expected. In
 the end, it's the same example as `level.s` (same level to scroll), but the top
 part does not move and shows a "THIS DOES NOT MOVE" message.
 
-Last but not least, the `mmc3.s` example shows how to configure the MMC3 chip
-(e.g. Super Mario Bros. 3, Kirby's Adventure) to have better control on which
-parts of the screen to scroll or not. To showcase this the example implements a
-roulette mini-game (similar to Super Mario Bros. 3 but simpler).
+## Scrolling in different ways in the same frame
+
+Some chips like the MMC3 give programmers a lot of flexibility when it comes to
+mid-frame customization. That is, chips like the MMC3 give an interface in which
+programmers can ask the chip to submit an IRQ on a given exact scanline. One
+main usage of this was to allow a top section of the screen to scroll, while
+leaving a small section at the bottom not to scroll. This way, games were no
+longer required to have a status bar at the top and they could have it at the
+bottom. But these chips allow for a lot of flexibility, so programmers can get
+playful with it. One simple example is the roulette mini-game from Super Mario
+Bros. 3. In here the game asks for two scanline IRQs and then the scroll
+direction is changed on each given IRQ. This way, the background is split in
+three sections that move in different directions/speed. Something similar (but
+more simple) has been reproduced in [roulette.s](./roulette.s), giving the
+following result:
+
+![roulette.png](../docs/roulette.gif)

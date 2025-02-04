@@ -10,3 +10,5 @@ the data.
 
 A very simple example is provided in [blink.s](./blink.s) where a character
 blinks periodically.
+
+![blink.gif](../docs/blink.gif)
