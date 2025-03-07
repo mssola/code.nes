@@ -21,8 +21,11 @@
 .segment "CODE"
 
 .include "../shared/diskun.s"
+.include "../shared/clear.s"
 
 .proc main
+    CLEAR_SCREEN
+
     jsr Diskun::init_palettes
     jsr init_sprites
 

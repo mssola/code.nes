@@ -107,6 +107,7 @@
 ;;; player around.
 .segment "FIXED"
 .include "../shared/diskun.s"
+.include "../shared/clear.s"
 
 ;;; NOTE: the main bulk of this example. Comments only for the parts which are
 ;;; specific to this example.
@@ -201,6 +202,10 @@ reset:
 
 ;; The main function is used here only for further initialization purposes.
 .proc main
+    ;; Clear both screens to avoid funky business, as we are not doing anything
+    ;; specially clever here.
+    CLEAR_SCREENS $20, $24
+
     ;; Initialize both the palettes and the nametables.
     jsr Diskun::init_palettes
     jsr init_nametables

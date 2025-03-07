@@ -122,6 +122,7 @@
 ;;; player around.
 .segment "FIXED"
 .include "../shared/diskun.s"
+.include "../shared/clear.s"
 
 ;;; NOTE: the main bulk of this example. Comments only for the parts which are
 ;;; specific to this example.
@@ -251,6 +252,8 @@ reset:
     ;; that's where sprites are located (check the CHARS segment for more info).
     lda #4
     sta Vars::last_bank
+
+    CLEAR_SCREEN
 
     jsr Diskun::init_palettes
     jsr init_sprites
