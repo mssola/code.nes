@@ -23,7 +23,6 @@
 ;; basic identification, it defines some relevant things like PRG and CHR sizes,
 ;; plus mapping if desired. See https://www.nesdev.org/wiki/NES_2.0#Header for
 ;; documentation on this, or also: https://www.nesdev.org/neshdr20.txt.
-;;;
 .segment "HEADER"
     ;; The first thing to do is to define the magic "NES\0" string identifier
     ;; ($1A is the ASCII that MS-DOS wanted as end of string). Some people write
@@ -82,7 +81,6 @@
 ;; actually removes this segment in its linker configuration down the road).
 ;; This is also removed by the configuration provided in `config/nrom.cfg`,
 ;; which is the one being used in the end for this example.
-;;;
 ;; .segment "STARTUP"
 
 .segment "CODE"
@@ -94,8 +92,7 @@
 ;; NesDev wiki which is pretty much followed by everyone as I could see. The
 ;; main idea is to leave the hardware in a known state and then jump into the
 ;; main game subroutine.
-;;;
-reset:
+.proc reset
     ;; We first instruct the NES to disable everything. That is, we don't want
     ;; any pesky interrupt to make us jump into the `nmi` section, for example,
     ;; before we have configured everything.
@@ -200,10 +197,10 @@ reset:
     ;;
     ;; "Resetting sprites" is just a matter of giving them a value which will
     ;; not bother us in the future. One way to do this is to set each value to
-    ;; $ef, which will give each "sprite" off-screen Y-coordinates. How any of
+    ;; $EF, which will give each "sprite" off-screen Y-coordinates. How any of
     ;; this is the case will be shown whenever we deal with loading proper
     ;; sprites below.
-    lda #$ef
+    lda #$EF
 @sprite_reset_loop:
     sta $200, x
     inx
@@ -217,7 +214,7 @@ reset:
     ;; the byte given at the OAMADDR, thus XX = #$00; and N = 2 (see `lda
     ;; #$02`). Therefore, we are telling the PPU to start the DMA process from
     ;; $200. The PPU will assume that the following 256 bytes of memory are the
-    ;; ones to be copied, resulting in a DMA copy of $200-$2ff, right where we
+    ;; ones to be copied, resulting in a DMA copy of $200-$2FF, right where we
     ;; stored the sprite data in advance.
     lda #$00
     sta $2003                   ; OAMADDR
@@ -238,7 +235,7 @@ reset:
     ;; stored. Palettes are the answer from old systems like the NES to: how can
     ;; you display this amount of colors on screen without taking too much
     ;; memory? The NES allows developers to store eight palettes (four
-    ;; background, four foreground), and each palette group four colors. This
+    ;; background, four foreground), and each palette groups four colors. This
     ;; way, whenever we want to draw a sprite or a piece of background, we don't
     ;; specify which colors to pick for each pixel, but we rather apply a
     ;; palette to a sprite or background tile definition.
@@ -268,12 +265,12 @@ reset:
     ;; jump into our main subroutine and start loading sprites, palettes, etc.;
     ;; and start the game proper.
     jmp main
+.endproc
 
 ;;;
 ;; This is our main subroutine. At this point we can assume that the hardware
 ;; has already been set to a proper and defined state. So now we can load all
 ;; the data we need for our game and enter the main game loop.
-;;;
 .proc main
     ;; Before starting the game loop proper we initialize all our assets: load
     ;; the palettes, nametables and sprites for this game.
@@ -341,7 +338,7 @@ reset:
 .proc init_palettes
     ;; Remember these four instructions? That's what we also did when resetting
     ;; palettes on the reset code. That is, we are preparing the PPU to write
-    ;; data starting from $3f00.
+    ;; data starting from $3F00.
     lda #$3F
     sta $2006                   ; PPUADDR
     lda #$00
@@ -500,7 +497,7 @@ palettes:
     ;; This is tied to the number of sprites stored in the `initial_sprite_data`
     ;; section. Remember that this can be 64 *maximum*: 64 sprites * 4 bytes per
     ;; sprite = 256 bytes; which is the reserved space in memory we have for
-    ;; sprites: $0200-$02ff.
+    ;; sprites: $0200-$02FF.
     NUM_SPRITES = 2
 
     ;; The loading is quite straight-forward. We just store whatever is on
@@ -551,8 +548,7 @@ initial_sprite_data:
 ;; we ought to keep things as simple and fast as possible. You can take a look
 ;; at the examples from `scroll` for more complex NMI code that have to handle
 ;; stuff like VRAM buffering or setting other PPU registers.
-;;;
-nmi:
+.proc nmi
     ;; As mentioned on the `main` subroutine, rendering will be skipped until
     ;; the proper flag is set.
     bit $20
@@ -601,6 +597,7 @@ nmi:
     pla
 @next:
     rti
+.endproc
 
 ;;;
 ;; Interrupt Requests handler. This is triggered by the NES' sound processor
@@ -608,8 +605,9 @@ nmi:
 ;; mapper). In our case we don't have to do anything here, so we just return
 ;; from the interrupt.
 ;;;
-irq:
+.proc irq
     rti
+.endproc
 
 ;;;
 ;; Include into this all the data that needs to go into the CHR ROM. One typical

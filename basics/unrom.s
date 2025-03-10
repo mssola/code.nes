@@ -101,32 +101,37 @@ banktable:
 ;; Variable containing the bank we are currently in. It's useful to keep track
 ;; of the bank so the NMI handler can restore it if it does some bank switching
 ;; of its own.
-m_current_bank = $00
+zp_current_bank = $00
 
 ;; Perform a bankswitch by using the value on the `y` register. Note that you
 ;; can use the `bankswitch_nosave` variant, which is useful if you just want to
 ;; perform a temporary bankswitch (e.g. on NMI code).
 bankswitch:
-    sty m_current_bank
+    sty zp_current_bank
 bankswitch_nosave:
     tya
     sta banktable, y
     rts
 
 ;; Unused
-nmi:
-irq:
+.proc nmi
     rti
+.endproc
+
+;; Unused
+.proc irq
+    rti
+.endproc
 
 ;; Check `basics/sprite.s` for a deeper look on the logic below. I have only
 ;; added code after configuration/reset is done.
-reset:
+.proc reset
     sei
     cld
     ldx #$40
     stx $4017
 
-    ldx #$ff
+    ldx #$FF
     txs
 
     inx
@@ -178,3 +183,4 @@ reset:
     ;; Loop forever, there's nothing to be done here.
 @loop:
     jmp @loop
+.endproc

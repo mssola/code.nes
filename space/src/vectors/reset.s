@@ -2,13 +2,13 @@
 
 ;; Check `basics/sprite.s` for a deeper look on the logic below. I have only
 ;; added code after configuration/reset is done.
-reset:
+.proc reset
     sei
     cld
     ldx #$40
     stx $4017
 
-    ldx #$ff
+    ldx #$FF
     txs
 
     inx
@@ -33,7 +33,7 @@ reset:
     inx
     bne @ram_reset_loop
 
-    lda #$ef
+    lda #$EF
 @sprite_reset_loop:
     sta $200, x
     inx
@@ -47,3 +47,4 @@ reset:
     ;; NOTE: configuration/reset is done, the code below is our actual program :D
 
     jmp main
+.endproc

@@ -1,5 +1,5 @@
 ;; See `basics/sprite.s` for more info. I'm not doing anything fancier here.
-nmi:
+.proc nmi
     bit $20
     bpl @next
 
@@ -30,3 +30,4 @@ nmi:
     pla
 @next:
     rti
+.endproc

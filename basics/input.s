@@ -13,12 +13,10 @@
 ;; which brings some other considerations when reading from controllers. That
 ;; is, the algorithm shown below is not entirely "safe" due to a hardware bug
 ;; which might give unreliable inputs on some spikes.
-;;;
 
 ;;;
 ;; You can safely ignore all of this up until the `ReadController` subroutine.
 ;; This is boilerplate that is explained on the `sprite.s` example.
-;;;
 
 .segment "HEADER"
     .byte 'N', 'E', 'S', $1A
@@ -34,17 +32,23 @@
 
 .segment "CODE"
 
-nmi:
-irq:
-  rti
+;; Unused
+.proc nmi
+    rti
+.endproc
 
-reset:
+;; Unused
+.proc irq
+    rti
+.endproc
+
+.proc reset
     sei
     cld
     ldx #$40
     stx $4017
 
-    ldx #$ff
+    ldx #$FF
     txs
 
     inx
@@ -75,6 +79,7 @@ reset:
     bpl @vblankwait2
 
     jmp main
+.endproc
 
 .proc ReadController
   ;; The status of the eight buttons fits into a single byte. We start the whole
@@ -117,7 +122,7 @@ reset:
   ;;      `rol` instruction. At this point, we have already read the full byte.
 read_loop:
   lda $4016
-  lsr a
+  lsr
   rol $20
   bcc read_loop
 
@@ -166,8 +171,6 @@ pressed:
 
   ;; There and back again.
   jmp loop
-
-  rts
 .endproc
 
 .segment "CHARS"

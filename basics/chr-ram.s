@@ -29,7 +29,8 @@
 
 .segment "BANK0"
 
-chr: .incbin "../assets/basic.chr"
+chr:
+    .incbin "../assets/basic.chr"
 
 .segment "BANK1"
 .byte $00
@@ -56,33 +57,18 @@ chr: .incbin "../assets/basic.chr"
 .segment "FIXED"
 
 ;;;
-;; Bank switching code as with `basics/unrom.s`. Not used here.
-
-banktable:
-  .byte $00, $01, $02, $03, $04, $05, $06
-
-m_current_bank = $00
-
-bankswitch:
-    sty m_current_bank
-bankswitch_nosave:
-    tya
-    sta banktable, y
-    rts
-
-;;;
 ;; From here on the code is basically the same as `basics/sprite.s`, but with a
 ;; special twist that will be commented in. For comments on the rest of the code
 ;; just check `basics/sprite.s`.
 
-reset:
+.proc reset
     sei
     cld
 
-    ldx #$40
+    ldx #$FF
     stx $4017
 
-    ldx #$ff
+    ldx #$FF
     txs
     inx
     stx $2000
@@ -139,6 +125,7 @@ reset:
     bne @palettes_reset_loop
 
     jmp main
+.endproc
 
 ;;;
 ;; Transfer the CHR data from PRG-ROM into RAM.
@@ -166,17 +153,17 @@ reset:
     ;; - x contains the number of 256-byte pages to copy.
     ;; - y will index within the page ($00-$FF).
     ldx #32
-loop:
+@loop:
     ;; First part of the loop: copy each byte of the current page.
     lda ($00), y
     sta $2007
     iny
-    bne loop
+    bne @loop
 
     ;; Go to the next page and repeat the first part of the loop.
     inc $01
     dex
-    bne loop
+    bne @loop
 
     rts
 .endproc
@@ -274,7 +261,7 @@ initial_sprite_data:
     .byte $B0, $00, %01000000, $82
 .endproc
 
-nmi:
+.proc nmi
     bit $20
     bpl @next
 
@@ -305,6 +292,8 @@ nmi:
     pla
 @next:
     rti
+.endproc
 
-irq:
+.proc irq
     rti
+.endproc

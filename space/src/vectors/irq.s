@@ -1,6 +1,5 @@
-.segment "CODE"
-
 ;; Interrupt Requests handler.
-irq:
+.proc irq
     ;; Nothing to do for us here :)
     rti
+.endproc

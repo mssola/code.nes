@@ -9,7 +9,6 @@
 ;;
 ;; The subpixel movement is largely based on:
 ;; https://github.com/NesHacker/PlatformerMovement.
-;;;
 
 .segment "HEADER"
     .byte 'N', 'E', 'S', $1A
@@ -77,10 +76,10 @@
     jsr Bullets::update
 
     ;; This is a hand-shake between the code on `main` and the code on the
-    ;; `nmi`. See Game::flags for more.
+    ;; `nmi`. See Game::zp_flags for more.
     SET_RENDER_FLAG
 @wait_for_render:
-    bit Game::flags
+    bit Game::zp_flags
     bmi @wait_for_render
 
     ;; Rendering is done, we can perform another iteration of the loop!

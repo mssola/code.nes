@@ -61,7 +61,6 @@
     jmp @main_game_loop
 .endproc
 
-
 ;;;
 ;; NOTE: this is the actual meat of the example :D
 .proc apply_flicker
@@ -135,7 +134,7 @@
 ;;;
 ;; NOTE: and from here on stuff that is not relevant for sprite flickering.
 
-nmi:
+.proc nmi
     bit $20
     bpl @next
 
@@ -168,15 +167,16 @@ nmi:
     pla
 @next:
     rti
+.endproc
 
-reset:
+.proc reset
     sei
     cld
 
     ldx #$40
     stx $4017                   ; APU Frame Counter
 
-    ldx #$ff
+    ldx #$FF
     txs
 
     inx
@@ -201,7 +201,7 @@ reset:
     inx
     bne @ram_reset_loop         ; if x overflows back to #00, then we are done.
 
-    lda #$ef
+    lda #$EF
 @sprite_reset_loop:
     sta $200, x
     inx
@@ -229,9 +229,11 @@ reset:
     bne @palettes_reset_loop
 
     jmp main
+.endproc
 
-irq:
+.proc irq
     rti
+.endproc
 
 .proc init_sprites
     NUM_SPRITES = 20

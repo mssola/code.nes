@@ -13,10 +13,10 @@
 ;; deal.
 .scope Bullets
     ;; The number of bullets shown on screen for the current frame.
-    m_bullets_screen = $40
+    zp_bullets_screen = $40
 
     ;; Frame counter. See `FRAMES` below.
-    m_frames = $41
+    zp_frames = $41
 
     ;; How many frames have to pass to allow the user to shoot another bullet
     ;; after the previous one.
@@ -27,14 +27,14 @@
         ;; Initializing variables.
 
         lda #0
-        sta m_bullets_screen
+        sta zp_bullets_screen
 
         lda #FRAMES
-        sta m_frames
+        sta zp_frames
 
         ;; Set X and Y positions off-screen for the three available slots.
 
-        lda #$ff
+        lda #$FF
         sta $208
         sta $20C
         sta $210
@@ -64,10 +64,10 @@
         ;; If the frame counter has the same value as our allowed one, we can go
         ;; into the `bullets_pressed` subroutine, otherwise we will skip it
         ;; altogether.
-        lda m_frames
+        lda zp_frames
         cmp #FRAMES
         beq @check
-        inc m_frames
+        inc zp_frames
         jmp @position
     @check:
         jsr bullets_pressed
@@ -81,7 +81,7 @@
     ;; and it is possible.
     .proc bullets_pressed
         ;; If we reached the maximum of bullets on screen, return early.
-        lda m_bullets_screen
+        lda zp_bullets_screen
         cmp #3
         bne :+
         rts
@@ -117,9 +117,9 @@
         ;; At the current index we have a bullet to initialize. Hence, give it
         ;; the Y value from the player and the X one (+4 so it's at the center
         ;; of the ship on the X axis).
-        lda Player::m_screen_y
+        lda Player::zp_screen_y
         sta $208, x
-        lda Player::m_screen_x
+        lda Player::zp_screen_x
         clc
         adc #4
         inx
@@ -127,11 +127,11 @@
         inx
         sta $208, x
 
-        ;; Reset the `m_frames` so to disallow too many bullets being shot at
-        ;; once, and increate the `m_bullets_screen` variable.
+        ;; Reset the `zp_frames` so to disallow too many bullets being shot at
+        ;; once, and increate the `zp_bullets_screen` variable.
         lda #0
-        sta m_frames
-        inc m_bullets_screen
+        sta zp_frames
+        inc zp_bullets_screen
     @end:
         rts
     .endproc
@@ -158,9 +158,9 @@
         sbc #10
         jmp @save
     @free:
-        ;; This bullet should be freed, decrease `m_bullets_screen` and set `a`
+        ;; This bullet should be freed, decrease `zp_bullets_screen` and set `a`
         ;; to an off-screen value.
-        dec m_bullets_screen
+        dec zp_bullets_screen
         lda #$FF
     @save:
         ;; Either way you reach this, in `a` we have the Y value to be stored.

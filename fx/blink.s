@@ -5,7 +5,7 @@
 ;; https://www.nesdev.org/wiki/MMC3. The MMC3 is a pretty advanced chip, so
 ;; first go over the `basics/` directory for a better understanding on easier
 ;; topics. Most importantly, take a look at examples like `basics/persist.s` or
-;; `basics/unrom`, which also perform bank switching albeit with simpler
+;; `basics/unrom.s`, which also perform bank switching albeit with simpler
 ;; hardware.
 ;;
 ;; This example basically makes use of the bank switching capabilities of the
@@ -41,8 +41,8 @@
 
 ;; Variables used on this example.
 .scope Vars
-    counter   = $00
-    last_bank = $01
+    zp_counter   = $00
+    zp_last_bank = $01
 .endscope
 
 .segment "HEADER"
@@ -128,14 +128,14 @@
 ;;; specific to this example.
 .segment "TAIL"
 
-reset:
+.proc reset
     sei
     cld
 
     ldx #$40
     stx $4017
 
-    ldx #$ff
+    ldx #$FF
     txs
 
     inx
@@ -217,7 +217,7 @@ reset:
     inx
     bne @ram_reset_loop
 
-    lda #$ef
+    lda #$EF
 @sprite_reset_loop:
     sta $200, x
     inx
@@ -244,6 +244,7 @@ reset:
     dex
     bne @palettes_reset_loop
     jmp main
+.endproc
 
 ;;; NOTE: mainly as usual except that a bit of game loop has been added to
 ;;; handle the blinking state.
@@ -251,7 +252,7 @@ reset:
     ;; The code will iterate between banks 4 and 6 on the pattern table, as
     ;; that's where sprites are located (check the CHARS segment for more info).
     lda #4
-    sta Vars::last_bank
+    sta Vars::zp_last_bank
 
     CLEAR_SCREEN
 
@@ -289,13 +290,13 @@ reset:
     ;; NOTE: let there be a game logic :D
 
     ;; Is the counter already at the limit? If not just restart the game loop.
-    lda Vars::counter
+    lda Vars::zp_counter
     cmp #$20
     bne @main_game_loop
 
     ;; Reset the counter
     lda #0
-    sta Vars::counter
+    sta Vars::zp_counter
 
     ;; The whole trick is done on R2, which points to $1000, where the sprite
     ;; tiles begin. Hence, select it.
@@ -303,7 +304,7 @@ reset:
     sta MMC3::BANK_SELECT
 
     ;; The value for the register is either 4 or 6 depending on its last value.
-    lda Vars::last_bank
+    lda Vars::zp_last_bank
     cmp #4
     beq :+
     lda #4
@@ -312,7 +313,7 @@ reset:
     lda #6
 @set:
     ;; Save which is the bank being used both internally and onto the MMC3 chip.
-    sta Vars::last_bank
+    sta Vars::zp_last_bank
     sta MMC3::BANK_DATA
 
     jmp @main_game_loop
@@ -346,7 +347,7 @@ initial_sprite_data:
 
 ;;; NOTE: nothing to highlight here other than the counter is increased on each
 ;;; NMI.
-nmi:
+.proc nmi
     bit $20
     bpl @next
 
@@ -357,7 +358,7 @@ nmi:
     pha
 
     ;; Increase the counter for the blinking.
-    inc Vars::counter
+    inc Vars::zp_counter
 
     jsr Diskun::nmi_update
 
@@ -382,10 +383,12 @@ nmi:
     pla
 @next:
     rti
+.endproc
 
 ;;; NOTE: IRQ is disabled when setting up the MMC3 chip for this example.
-irq:
+.proc irq
     rti
+.endproc
 
 ;;; NOTE: The header for this game advertises 128KB for CHR-ROM. This is wildly
 ;;; too much for this example, but it's a reasonable size for an MMC3 game.
@@ -402,7 +405,7 @@ irq:
 ;; filled with `diskun0.chr` and `diskun1.chr`, which are 2KB each. Hence, the
 ;; 4th CHR bank contains the regular character, and the 6th CHR bank contains
 ;; the blinking version. You can see these values used when initializing
-;; `Vars::last_bank`, or when performing bank switching.
+;; `Vars::zp_last_bank`, or when performing bank switching.
 .res $1000, $00
 .incbin "../assets/diskun0.chr" ; First half of the second pattern table has the default diskun character.
 .incbin "../assets/diskun1.chr" ; Second half of the second pattern table simply has the blinking version.

@@ -43,19 +43,24 @@
 .segment "BANK1"
 
 ;; Unused
-nmi:
-irq:
-  rti
+.proc nmi
+    rti
+.endproc
+
+;; Unused
+.proc irq
+    rti
+.endproc
 
 ;; Check `basics/sprite.s` for a deeper look on the logic below. I have only
 ;; added comments to MMC1-specific stuff.
-reset:
+.proc reset
     sei
     cld
     ldx #$40
     stx $4017
 
-    ldx #$ff
+    ldx #$FF
     txs
 
     inx
@@ -165,6 +170,7 @@ reset_mmc1:
     ;; Loop forever, there's nothing to be done here.
 @loop:
     jmp @loop
+.endproc
 
 ;; Unused
 .segment "CHR0"
