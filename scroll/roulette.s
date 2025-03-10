@@ -24,10 +24,10 @@
 
 ;; Variables used on this example.
 .scope Vars
-    top_scroll    = $00
-    center_scroll = $01
-    bottom_scroll = $02
-    is_bottom     = $04         ; 0 -> scroll center; 1 -> scroll bottom
+    zp_top_scroll    = $00
+    zp_center_scroll = $01
+    zp_bottom_scroll = $02
+    zp_is_bottom     = $04         ; 0 -> scroll center; 1 -> scroll bottom
 .endscope
 
 .segment "HEADER"
@@ -114,7 +114,7 @@
 .segment "TAIL"
 .include "../shared/ppu.s"
 
-reset:
+.proc reset
     sei
     cld
 
@@ -126,7 +126,7 @@ reset:
     ldx #$40
     stx $4017
 
-    ldx #$ff
+    ldx #$FF
     txs
 
     inx
@@ -172,7 +172,7 @@ reset:
     inx
     bne @ram_reset_loop
 
-    lda #$ef
+    lda #$EF
 @sprite_reset_loop:
     sta $200, x
     inx
@@ -199,6 +199,7 @@ reset:
     dex
     bne @palettes_reset_loop
     jmp main
+.endproc
 
 ;; The main function is used here only for further initialization purposes.
 .proc main
@@ -369,7 +370,7 @@ reset:
 ;; has to do mainly two things:
 ;;   1. Set up a scanline IRQ so the scroll at the center/bottom is different.
 ;;   2. Set the scroll for the top region.
-nmi:
+.proc nmi
     bit $20
     bpl @next
 
@@ -406,10 +407,10 @@ nmi:
     ;; the top section. The scroll will only happen on the X axis and it's going
     ;; to be a bit fast.
     bit $2002
-    lda Vars::top_scroll
+    lda Vars::zp_top_scroll
     clc
     adc #2
-    sta Vars::top_scroll
+    sta Vars::zp_top_scroll
     sta $2005
     lda #$00
     sta $2005
@@ -427,6 +428,7 @@ nmi:
     pla
 @next:
     rti
+.endproc
 
 ;;;
 ;; NOTE: handle a scanline IRQ.
@@ -435,7 +437,7 @@ nmi:
 ;; moment, but we have disabled the frame counter on our `reset` code, so on the
 ;; context of the MMC3 chip the only thing left are scanline IRQs, which we have
 ;; set up on `nmi` code.
-irq:
+.proc irq
     ;; Save current context.
     pha
     txa
@@ -448,30 +450,30 @@ irq:
     stx MMC3::IRQ_DISABLE
 
     ;; What are we trying to scroll, exactly?
-    lda Vars::is_bottom
+    lda Vars::zp_is_bottom
     beq @scroll_right
 
     ;; We are scrolling the bottom section, which scrolls in the same direction
     ;; as the top one but a bit slower at that. Load the next scroll value on
-    ;; the `a` register and `Vars::bottom_scroll`.
-    lda Vars::bottom_scroll
+    ;; the `a` register and `Vars::zp_bottom_scroll`.
+    lda Vars::zp_bottom_scroll
     clc
     adc #1
-    sta Vars::bottom_scroll
+    sta Vars::zp_bottom_scroll
     ldy #0
-    sty Vars::is_bottom
+    sty Vars::zp_is_bottom
     jmp @do_scroll
 
 @scroll_right:
     ;; We are scrolling the center, which works by going on the opposite
     ;; direction as the top and bottom sections. Load the next scroll value on
-    ;; the `a` register and `Vars::center_scroll`.
-    lda Vars::center_scroll
+    ;; the `a` register and `Vars::zp_center_scroll`.
+    lda Vars::zp_center_scroll
     sec
     adc #$FD
-    sta Vars::center_scroll
+    sta Vars::zp_center_scroll
     ldy #1
-    sty Vars::is_bottom
+    sty Vars::zp_is_bottom
 
     ;; We are at the center, but there is still the bottom section to be
     ;; scrolled differently. Hence, set a new scanline IRQ 80 lines ahead of
@@ -497,6 +499,7 @@ irq:
     pla
 
     rti
+.endproc
 
 ;;; NOTE: pretty much the same as `fx/blink.s`.
 

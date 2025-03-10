@@ -1,5 +1,3 @@
-.segment "CODE"
-
 .scope OAM
     ADDR = $2003
     DMA  = $4014

@@ -1,19 +1,59 @@
-## Scrolling
+## A primer to scrolling
 
 Scrolling is a big topic and it's something that evolved with the NES hardware.
 This set of examples try to cover it as much as possible while being
-approachable as single files.
+approachable. But before diving into some more realistic examples, let's first
+try to understand the concept of scrolling in NES/Famicom programming.
 
-First of all, you should take a look at `level.s`, which shows how games can
-scroll a level that spans multiple screens and continuously load/unload the
-next/previous sections of the level.
+The very basic concepts of scrolling can be seen in `toggle.s`, which gives you
+this as a result:
 
-The second example is `sprite0.s`, which covers the scrolling done by games such
-as Super Mario Bros. or Punch-out. That is, we use the "sprite 0 hit" detection
-to keep the top level part of the screen from moving (so to show relevant
-information), while allowing the rest of the screen to scroll as expected. In
-the end, it's the same example as `level.s` (same level to scroll), but the top
-part does not move and shows a "THIS DOES NOT MOVE" message.
+TBD
+
+This looks rather simplistic but some games used this technique. For example, in
+Dropzone it was used to perform some effects on the title screen. Hence,
+performing a simple scroll between two nametables is not just for learning
+purposes, it was also used in real life games.
+
+## Scrolling multiple screens to the right
+
+With the basics covered, now let's see how a game can scroll past two screens
+worth of data. This is delivered on the `level.s` example, and pressing "Select"
+allows you to toggle between different "levels". This gives you the following
+results:
+
+![level.gif](../docs/level.gif)
+
+This is all accomplished by dropping the notion of tiles and speaking in
+"metatile" terms. That is, instead of dividing the screen in 8x8 pixels, we go
+up to 16x16 pixel blocks. These blocks are the ones being continuously loaded
+when the player moves, and they are the ones being considered for collision
+checks. This is all better explained and with all the gory details inside of the
+[./include](./include) directory, which is somewhat of a library for the rest of
+the scrolling examples. The concepts at display here and more complex than they
+look, so take your time. Also note that different games had different ways on
+how to handle metatiles, so don't go out from these examples thinking "oh, so
+this is how *all* games mapped things on screen!". This is just one way to do
+so, every game came with its own engine with its own quirks. Consider, for
+example, how Megaman games had "meta-metatiles" (a concept also used in modern
+games like [Micro Mages](https://youtu.be/ZWQ0591PAxM?si=kE69LfgpaW6t-Sr3)).
+
+Last but not least, bear in mind that this "engine" comes with some big
+limitations, like the inability to scroll to the left.
+
+## Detecting collision on sprite 0
+
+Another limitation from the `level.s` example is how *everything* scrolls. This
+would be a bummer for most games from the era since they would've wanted to
+reserve some space on screen to show a "status" bar: how many lifes you have,
+score, etc.
+
+In games like Super Marios Bros. or Punch-out, this was achieved thanks to the
+"sprite 0 hit" detection. TBD
+
+## Bringing the status bar down below
+
+TBD: see also explanation below
 
 ## Scrolling in different ways in the same frame
 
@@ -32,3 +72,7 @@ more simple) has been reproduced in [roulette.s](./roulette.s), giving the
 following result:
 
 ![roulette.png](../docs/roulette.gif)
+
+## Expanding to have multiple scrolling directions
+
+TBD: toggle4.s
