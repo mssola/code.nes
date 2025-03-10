@@ -22,7 +22,9 @@ worth of data. This is delivered on the `level.s` example, and pressing "Select"
 allows you to toggle between different "levels". This gives you the following
 results:
 
-![level.gif](../docs/level.gif)
+<div align="center">
+    <img src="../docs/level.gif" alt="level.gif" />
+</div>
 
 This is all accomplished by dropping the notion of tiles and speaking in
 "metatile" terms. That is, instead of dividing the screen in 8x8 pixels, we go
@@ -71,7 +73,9 @@ three sections that move in different directions/speed. Something similar (but
 more simple) has been reproduced in [roulette.s](./roulette.s), giving the
 following result:
 
-![roulette.png](../docs/roulette.gif)
+<div align="center">
+    <img src="../docs/roulette.gif" alt="roulette.gif" />
+</div>
 
 ## Expanding to have multiple scrolling directions
 
