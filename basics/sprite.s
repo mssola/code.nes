@@ -10,12 +10,11 @@
 ;; through a linker configuration. You can provide a configuration of your own,
 ;; but bear in mind that compilers like `cc65` (the one used here, which is the
 ;; most common) already provide a default configuration for the linker that
-;; glues a set of pretty common defined named segments. You can read about this
-;; in `cfg/nes.cfg` from inside your cc65 installation. Otherwise, I have also
-;; written linker configuration files for other examples: take a look, for
+;; glues a set of pretty commonly defined named segments. You can read about
+;; this in `cfg/nes.cfg` from inside your cc65 installation. Otherwise, I have
+;; also written linker configuration files for other examples: take a look, for
 ;; instance, at the `config/unrom.cfg` file, which is used by the
 ;; `basics/unrom.s` program.
-;;;
 
 ;;;
 ;; The "HEADER" is the first segment of any iNES binary and it contains basic
@@ -32,8 +31,10 @@
     .byte 'N', 'E', 'S', $1A
 
     ;; The next two bytes define the size of the PRG and CHR ROMs in this order.
-    ;; Hence, the next two bytes define a 32KB (2 x 16KB) of PRG-ROM, and 8KB
-    ;; (1 x 8KB) of CHR-ROM.
+    ;; Hence, the next two bytes define a 32KB (2 x 16KB) of PRG-ROM, and 8KB (1
+    ;; x 8KB) of CHR-ROM. This is the value expected on "NROM" cartridges (see
+    ;; https://www.nesdev.org/wiki/NROM), which were the cartridges first used
+    ;; by Nintendo (e.g. Super Mario Bros.).
     .byte $02
     .byte $01
 
@@ -60,9 +61,10 @@
 ;; handler, and the IRQ handler. If you look at the configuration from `cc65`
 ;; that was provided on your installation (or if you are pesky enough to create
 ;; one yourself), you will notice that these vector addresses are placed at the
-;; very end of memory ($fffa-ffff). The NES (and emulators) will look at these
-;; three last positions in memory to know where to jump for each case.
-;;;
+;; very end of memory ($fffa-ffff). This is not a quirk from the configuration,
+;; but it's a requirement from the architecture of the 6502 processor. Hence,
+;; the NES/Famicom (and emulators) will look at these three last addresses to
+;; know where to jump for each case.
 .segment "VECTORS"
     .addr nmi
     .addr reset
@@ -105,7 +107,7 @@
 
     ;; Disable APU frame IRQ. This is the first instance we see of Memory-Mapped
     ;; I/O. This is a core concept in NES programming and, to sum things up, the
-    ;; memory range $2000-$6000 is reserved to I/O operations, and each address
+    ;; memory range $2000-$5FFF is reserved to I/O operations, and each address
     ;; is reserved to a specific hardware operation. This is because the NES CPU
     ;; doesn't directly control the PPU nor other chips. In this case, ranges
     ;; $4000-$4017 control the APU (Audio Processing Unit). More precisely, the
@@ -117,9 +119,22 @@
     ldx #$40
     stx $4017                   ; APU Frame Counter
 
-    ;; Set up the stack register with the proper value (the stack will grow in
-    ;; decreasing order from $01FF -> $0100).
-    ldx #$ff
+    ;; By the architecture of the 6502 processor, the stack is last-in-first-out
+    ;; (LIFO) and lives at the first page ($100-$1FF). This way the stack
+    ;; register can be an 8-bit register instead of a 16-bit one. Moreover, the
+    ;; stack grows top-down: from $1FF to $100. With all of this at hand, we can
+    ;; simply initialize this register to $FF, which has to be loaded first on
+    ;; the `x` register since `txs` (Transfer X to Stack Pointer) is the only
+    ;; instruction in standard 6502 assembler which can touch the stack pointer.
+    ;;
+    ;; As a side note, in more complex scenarios in which you want to squeeze as
+    ;; much RAM-space as possible, you might want to use the first page for
+    ;; other tasks if the stack is guaranteed to not grow too much. If you check
+    ;; `scroll/include/buffer.s`, you will see that in there the VRAM buffer is
+    ;; reserved to grow from the lower end of the first page. A strict limit
+    ;; must be guaranteed so neither the stack nor the VRAM buffer overstep each
+    ;; other.
+    ldx #$FF
     txs
 
     ;; And now disable, in this order, NMI, rendering and DMC IRQs. Note that
