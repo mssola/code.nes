@@ -5,27 +5,27 @@ These set of examples try to cover it as much as possible while being
 approachable. But before diving into some more realistic examples, let's first
 try to understand the concept of scrolling in NES/Famicom programming.
 
-The very basic concepts of scrolling can be seen in [toggle.s](./toggle.s),
-which gives you this as a result:
+Scrolling at its most simple terms can be read at [toggle.s](./toggle.s), which
+gives you this as a result:
 
 <div align="center">
     <img src="../docs/toggle.gif" alt="toggle.gif" />
 </div>
 
-That is, we only have filled the two nametable available, and we are modifying
-the [PPU scroll register](https://www.nesdev.org/wiki/PPU_registers#PPUSCROLL)
-to move between one or the other. Another important note, easily missed when
-programming scrolling on the NES/Famicom for the first time, is that whenever
-the PPU scroll "wraps around", you should also update the base nametable address
-from the [PPU control
-register](https://www.nesdev.org/wiki/PPU_registers#PPUCTRL). That happens in
-two situations:
+That is, we only have filled the two nametables available in a vertical
+mirroring scenario, and we are modifying the [PPU scroll
+register](https://www.nesdev.org/wiki/PPU_registers#PPUSCROLL) to move between
+one or the other. Another important note, easily missed when programming
+scrolling on the NES/Famicom for the first time, is that whenever the PPU scroll
+"wraps around", you should also update the base nametable address from the [PPU
+control register](https://www.nesdev.org/wiki/PPU_registers#PPUCTRL). That
+happens in two cases:
 
-1. If you are scrolling right and PPU scroll turns into a `$00` value, then it
-   means that there's nothing else to show from the origin nametable, and that
-   `$00` on the scroll means it's `$00` in respect to a new nametable.
+1. If you are scrolling right and PPU scroll turns into `$00`, then it means
+   that there's nothing else to show from the origin nametable, and that `$00`
+   on the scroll means it's `$00` relative to a new nametable.
 2. If you are scrolling left and the PPU scroll turns into `$FF` (i.e. the first
-   step on scrolling left), then the base nametable address has to be updated
+   step when scrolling left), then the base nametable address has to be updated
    because it's `$FF` from the point of view of the nametable from the left.
 
 It's easy to miss these points, but from a PPU perspective (and hence from the
@@ -85,9 +85,10 @@ using the first color from the palette), and there shouldn't be in a special
 scenario like the PPU being disabled or the sprite being on a hidden margin.
 
 Because all of this, both Super Mario Bros. and Punch-out (and many other
-games), hid the first sprite to have the same color as the last background
-element being displayed from the HUD. This way, the sprite was not apparent to
-the player but the PPU would detect it anyways. This has also been done on
+games), place the first sprite inside of a background element being displayed
+from the HUD. This way, the sprite was not apparent to the player but the PPU
+would detect it anyways (and in Super Mario Bros., as a bonus, it would serve as
+subtle coin graphical effect). The same technique has been implemented in
 [sprite0.s](./sprite0.s), which uses the same engine as `level.s`, but this time
 the code on `nmi` has been modified to watch out for sprite 0 collision. This
 gives us this result:
