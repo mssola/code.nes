@@ -54,6 +54,9 @@ space:
 
 .PHONY: scroll
 scroll:
+	$(E) "	CC	 scroll/toggle"
+	$(Q) $(CC65) $(CCOPTS) scroll/toggle.s -C config/nrom.cfg -o out/scroll/toggle.nes
+
 	$(E) "	CC	 scroll/level"
 	$(Q) $(CC65) $(CCOPTS) scroll/level.s -C config/nrom.cfg -o out/scroll/level.nes
 

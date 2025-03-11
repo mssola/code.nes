@@ -8,11 +8,30 @@ try to understand the concept of scrolling in NES/Famicom programming.
 The very basic concepts of scrolling can be seen in [toggle.s](./toggle.s),
 which gives you this as a result:
 
-TBD
+<div align="center">
+    <img src="../docs/toggle.gif" alt="toggle.gif" />
+</div>
 
 That is, we only have filled the two nametable available, and we are modifying
 the [PPU scroll register](https://www.nesdev.org/wiki/PPU_registers#PPUSCROLL)
-to move between one or the other.
+to move between one or the other. Another important note, easily missed when
+programming scrolling on the NES/Famicom for the first time, is that whenever
+the PPU scroll "wraps around", you should also update the base nametable address
+from the [PPU control
+register](https://www.nesdev.org/wiki/PPU_registers#PPUCTRL). That happens in
+two situations:
+
+1. If you are scrolling right and PPU scroll turns into a `$00` value, then it
+   means that there's nothing else to show from the origin nametable, and that
+   `$00` on the scroll means it's `$00` in respect to a new nametable.
+2. If you are scrolling left and the PPU scroll turns into `$FF` (i.e. the first
+   step on scrolling left), then the base nametable address has to be updated
+   because it's `$FF` from the point of view of the nametable from the left.
+
+It's easy to miss these points, but from a PPU perspective (and hence from the
+perspective of a programmer interfacing with the PPU), it really makes sense.
+All in all, the scroll register is relative to whatever base nametable is set on
+the control register.
 
 This looks rather simplistic but some games used this technique. For example, in
 Dropzone it was used to perform some effects on the title screen. Hence,
