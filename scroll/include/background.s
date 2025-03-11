@@ -27,6 +27,15 @@
     DISABLED_BACKGROUND_CYCLE = $FE
     BACKGROUND_CYCLE_MAX = $02
 
+    ;; The offset for metatile rows. That is, from where should the engine start
+    ;; counting rows of metatiles. By default it's 0, but it could be set to
+    ;; something else to reserve so top space for a HUD or something similar.
+    ;;
+    ;; NOTE: configurable.
+    .ifndef BACKGROUND_ROW_OFFSET
+        BACKGROUND_ROW_OFFSET = 0
+    .endif
+
     ;; Current column (or the next to be loaded by functions like
     ;; `load_column`).
     zp_cur_column = $75
@@ -51,8 +60,10 @@
         lda #$00
         sta zp_scroll
         sta Buffer::zp_vram_idx
-        sta zp_cur_row
         sta zp_cur_column
+
+        lda #BACKGROUND_ROW_OFFSET
+        sta zp_cur_row
 
         rts
     .endproc
@@ -112,7 +123,7 @@
 
         ;; Increase the column being used and loop if we are not at the end of
         ;; the screen yet.
-        lda #0
+        lda #BACKGROUND_ROW_OFFSET
         sta zp_cur_row
         inc zp_cur_column
         lda zp_cur_column
@@ -418,7 +429,7 @@
     ;; screen/level by poking the right flags.
     .proc prepare_next_column
         ;; The row index always has to be set to zero.
-        lda #0
+        lda #BACKGROUND_ROW_OFFSET
         sta zp_cur_row
 
         ;; Is this the last column? If not, just quit.

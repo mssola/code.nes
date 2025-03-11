@@ -1,3 +1,13 @@
+;;;
+;; Allow the player to scroll a level which spans more than two screens wide.
+;; The heavy lifting is pulled by the engine contained in `include`, which even
+;; if it has some big limitations, it's good enough for showing how this can be
+;; achieved on the NES/Famicom. Read the comments along this file, but you will
+;; have to dig deeper into `include` to better grasp how any of this works.
+;;
+;; As a final touch, you can press "Select" to switch between different levels,
+;; even if I was lazy enough to only provide a second level.
+
 .segment "HEADER"
     .byte 'N', 'E', 'S', $1A
 

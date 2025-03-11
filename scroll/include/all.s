@@ -6,6 +6,7 @@
 .include "ppu.s"
 .include "../../shared/asm.s"
 .include "../../shared/joypad.s"
+.include "../../shared/ppu.s"
 
 .include "reset.s"
 .include "palettes.s"
