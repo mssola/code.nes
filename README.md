@@ -44,6 +44,7 @@ The examples are distributed like this:
 - Libraries: [list.nes](https://github.com/mssola/list.nes).
 - Misc: [Advent of Code 2023](https://github.com/mssola/aoc2023.nes).
 - Tooling: [tools.nes](https://github.com/mssola/tools.nes).
+- [Code style](https://github.com/mssola/style.nes) that I'm trying to follow here.
 
 ## License
 
