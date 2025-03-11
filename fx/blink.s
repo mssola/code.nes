@@ -277,7 +277,7 @@
     sta $2001
 
 @main_game_loop:
-    jsr joypad_read
+    READ_JOYPAD1
     jsr Diskun::update
 
     lda #%10000000

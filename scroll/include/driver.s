@@ -50,7 +50,7 @@
         ;; If `select` is pressed, then go for a new level. Otherwise check
         ;; whether there is a pending column to be loaded.
         lda #Joypad::BUTTON_SELECT
-        and Joypad::m_buttons1
+        and Joypad::zp_buttons1
         beq @check_column
 
         ;; Set the counter.

@@ -41,7 +41,7 @@
 
     .proc update
         lda #Joypad::BUTTON_UP
-        and Joypad::m_buttons1
+        and Joypad::zp_buttons1
         beq @check_down
 
         dec Diskun::m_screen_y
@@ -49,21 +49,21 @@
         jmp @check_left
     @check_down:
         lda #Joypad::BUTTON_DOWN
-        and Joypad::m_buttons1
+        and Joypad::zp_buttons1
         beq @check_left
 
         inc Diskun::m_screen_y
         inc Diskun::m_screen_y
     @check_left:
         lda #Joypad::BUTTON_LEFT
-        and Joypad::m_buttons1
+        and Joypad::zp_buttons1
         beq @check_right
 
         dec Diskun::m_screen_x
         dec Diskun::m_screen_x
     @check_right:
         lda #Joypad::BUTTON_RIGHT
-        and Joypad::m_buttons1
+        and Joypad::zp_buttons1
         beq @end
 
         inc Diskun::m_screen_x

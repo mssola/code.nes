@@ -70,11 +70,11 @@
     bne @end
 
     ;; Read the joypad.
-    jsr joypad_read
+    READ_JOYPAD1
 
     ;; Is the player pressing left? If so then the direction is to the left.
     lda #Joypad::BUTTON_LEFT
-    and Joypad::m_buttons1
+    and Joypad::zp_buttons1
     beq @check_right
     inc Vars::zp_scrolling
     lda #0
@@ -84,7 +84,7 @@
 @check_right:
     ;; Is the player pressing right? If so then the direction is to the right.
     lda #Joypad::BUTTON_RIGHT
-    and Joypad::m_buttons1
+    and Joypad::zp_buttons1
     beq @check_select
     inc Vars::zp_scrolling
     lda #1
@@ -95,7 +95,7 @@
     ;; Is the player pressing Select? Then the direction depends on the current
     ;; nametable.
     lda #Joypad::BUTTON_SELECT
-    and Joypad::m_buttons1
+    and Joypad::zp_buttons1
     beq @end
     inc Vars::zp_scrolling
     ldx #0

@@ -142,7 +142,7 @@ BACKGROUND_ROW_OFFSET = 1
     sta PPU::CONTROL
 
 @main_game_loop:
-    jsr joypad_read
+    READ_JOYPAD1
     jsr Player::update
     jsr Driver::update
 

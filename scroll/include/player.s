@@ -76,7 +76,7 @@
     .proc update
         ;; Is the player requesting to go up?
         lda #Joypad::BUTTON_UP
-        and Joypad::m_buttons1
+        and Joypad::zp_buttons1
         beq @check_down
 
         ;; If we are already at the top disregard this button press and check
@@ -108,7 +108,7 @@
     @check_down:
         ;; Is the player requesting to go down?
         lda #Joypad::BUTTON_DOWN
-        and Joypad::m_buttons1
+        and Joypad::zp_buttons1
         beq @check_left
 
         ;; We have to move down unless we are already at the very bottom.
@@ -135,7 +135,7 @@
     @check_left:
         ;; Is the player requesting to go left?
         lda #Joypad::BUTTON_LEFT
-        and Joypad::m_buttons1
+        and Joypad::zp_buttons1
         beq @check_right
 
         ;; We have to move left unless we are already at the leftmost edge.
@@ -160,7 +160,7 @@
     @check_right:
         ;; Last check! Is the player requesting to go right?
         lda #Joypad::BUTTON_RIGHT
-        and Joypad::m_buttons1
+        and Joypad::zp_buttons1
         bne @check_level_end
         rts
 
