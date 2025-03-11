@@ -35,7 +35,7 @@ joypad_unsafe_read_x:
     lda #$01
     sta Joypad::JOYPAD1
     sta Joypad::m_buttons1, x   ; Bit as a guard for the loop below.
-    lsr a
+    lsr
     sta Joypad::JOYPAD1
 
     ;; Now the joypad is ready to accept reads.
@@ -75,9 +75,9 @@ joypad_read_x:
     ;; but it sure is tricky.
 @joypad_read_x_reread:
     lda Joypad::m_buttons1, x
-    pha
+    tay
     jsr joypad_unsafe_read_x
-    pla
+    tya
     cmp Joypad::m_buttons1, x
     bne @joypad_read_x_reread
 
