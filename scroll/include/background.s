@@ -36,6 +36,16 @@
         BACKGROUND_ROW_OFFSET = 0
     .endif
 
+    ;; The maximum row coordinate this engine is allowed to go. That is, until
+    ;; which row each column is supposed to be rendered. By default it's $0F,
+    ;; but it could be set to something else to allow a status element down the
+    ;; screen.
+    ;;
+    ;; NOTE: configurable.
+    .ifndef BACKGROUND_ROW_MAX
+        BACKGROUND_ROW_MAX = $0F
+    .endif
+
     ;; Current column (or the next to be loaded by functions like
     ;; `load_column`).
     zp_cur_column = $75
@@ -251,7 +261,7 @@
         ;; We are actually at the end of the screen definition. Then the offset
         ;; is simply the current row until the end. If that turns out to be
         ;; zero, then we are done.
-        lda #$0F
+        lda #BACKGROUND_ROW_MAX
         sec
         sbc zp_cur_row
         beq @done
@@ -293,7 +303,7 @@
         ;; We are done pushing default metatiles. Check if we are done with the
         ;; column entirely.
         lda zp_cur_row
-        cmp #$0F
+        cmp #BACKGROUND_ROW_MAX
         beq @done
 
         ;; Push the metatile pointed by the screen pointer.
@@ -498,7 +508,7 @@
 
     @to_the_end:
         ;; We aren't: go until the last row.
-        lda #$0F
+        lda #BACKGROUND_ROW_MAX
 
     @compute:
         ;; Subtract the current row with the one we are trying to reach.

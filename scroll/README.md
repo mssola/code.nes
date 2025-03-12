@@ -1,7 +1,7 @@
 ## A primer to scrolling
 
-Scrolling is a big topic and it's something that evolved with the NES hardware.
-These set of examples try to cover it as much as possible while being
+Scrolling is a big topic and it's something that evolved with the NES/Famicom
+hardware. These set of examples try to cover it as much as possible while being
 approachable. But before diving into some more realistic examples, let's first
 try to understand the concept of scrolling in NES/Famicom programming.
 
@@ -17,9 +17,10 @@ mirroring scenario, and we are modifying the [PPU scroll
 register](https://www.nesdev.org/wiki/PPU_registers#PPUSCROLL) to move between
 one or the other. Another important note, easily missed when programming
 scrolling on the NES/Famicom for the first time, is that whenever the PPU scroll
-"wraps around", you should also update the base nametable address from the [PPU
-control register](https://www.nesdev.org/wiki/PPU_registers#PPUCTRL). That
-happens in two cases:
+"wraps around" between two different nametables, you should also update the base
+nametable address from the [PPU control
+register](https://www.nesdev.org/wiki/PPU_registers#PPUCTRL). That happens in
+two cases:
 
 1. If you are scrolling right and PPU scroll turns into `$00`, then it means
    that there's nothing else to show from the origin nametable, and that `$00`
@@ -33,10 +34,10 @@ perspective of a programmer interfacing with the PPU), it really makes sense.
 All in all, the scroll register is relative to whatever base nametable is set on
 the control register.
 
-This looks rather simplistic but some games used this technique. For example, in
-Dropzone it was used to perform some effects on the title screen. Hence,
-performing a simple scroll between two nametables is not just for learning
-purposes, it was also used in real life games.
+Overall, this example looks rather simplistic but some games used this
+technique. For example, in Dropzone it was used to perform some effects on the
+title screen. Hence, performing a simple scroll between two nametables is not
+just for learning purposes, it was also used in real life games.
 
 ## Scrolling multiple screens to the right
 
@@ -54,9 +55,10 @@ This is all accomplished by dropping the notion of tiles and speaking in
 up to 16x16 pixel blocks. These blocks are the ones being continuously loaded
 when the player moves, and they are the ones being considered for collision
 checks. This is all better explained and with all the gory details inside of the
-[./include](./include) directory, which is somewhat of a library for the rest of
-the scrolling examples. The concepts at display here are more complex than they
-look, so take your time.
+[./include](./include) directory, which is somewhat of a library/engine for the
+rest of the scrolling examples. The concepts at display here are more complex
+than they look, so take your time reading through the code on
+[./include](./include).
 
 Also note that different games had different ways on how to handle metatiles, so
 don't go out from these examples thinking "oh, so this is how *all* games mapped
@@ -79,10 +81,11 @@ In games like Super Marios Bros. or Punch-out, this was achieved thanks to the
 "sprite 0 hit" detection, which was a special feature from the PPU in which it
 would flip a bit on the [PPU status
 register](https://www.nesdev.org/wiki/PPU_registers#PPUSTATUS) whenever a
-background element was found to collide with the first sprite in OAM. That being
-said, both the sprite and the background element need to be opaque (that is, not
-using the first color from the palette), and there shouldn't be in a special
-scenario like the PPU being disabled or the sprite being on a hidden margin.
+background element was found to collide with the first sprite in
+[OAM](https://www.nesdev.org/wiki/PPU_OAM). That being said, both the sprite and
+the background element need to be opaque (that is, not using the first color
+from the palette), and there shouldn't be in a special scenario like the PPU
+being disabled or the sprite being on a hidden margin.
 
 Because all of this, both Super Mario Bros. and Punch-out (and many other
 games), place the first sprite inside of a background element being displayed
@@ -99,28 +102,48 @@ gives us this result:
 
 ## Bringing the status bar down below
 
-TBD: see also explanation below
+That being said, the sprite 0 hit detection technique is quite hacky, but more
+than that it is a waste of CPU resources: the CPU is spending a lot of time just
+waiting for this hit to happen instead of preparing for the next frame. That is,
+the CPU is wasting a lot of time constantly polling for some scanline.
+
+Fortunately, some later mapper chips (see examples on [basics/](../basics/) to
+understand what these are) like the [MMC3](https://www.nesdev.org/wiki/MMC3)
+provided methods for setting up an IRQ for a needed scanline. That is, the CPU,
+instead of constantly polling to detect whenever a given scanline was hit, could
+just tell the PPU "hey, just tell me whenever you reach this given scanline";
+and the PPU would send an IRQ on that condition. This way, the CPU could devote
+its resources to compute the next frame, and then, halfway computing the next
+frame, it would stop this task to fulfill an IRQ sent by the PPU, resuming
+shortly after. This is a much better usage of CPU time, and it could be done
+multiple times per frame. Thus, it is a technique that allowed for intricate
+effects, as it is shown by parallax effects in Ninja Gaiden II, or roulette-like
+minigames as in Super Mario Bros. 3.
+
+In [mmc3.s](./mmc3.s) we go for the most basic usage of this technique: let the
+scroll go on as usual, and then on a given scanline we will reset the scroll
+back to 0. This will allow us to show a "status bar", which is basically the
+same "This is a message" thing from the `sprite0.s` example. This looks
+something like this:
+
+<div align="center">
+    <img src="../docs/mmc3.gif" alt="mmc3.gif" />
+</div>
 
 ## Scrolling in different ways in the same frame
 
-Some chips like the MMC3 give programmers a lot of flexibility when it comes to
-mid-frame customization. That is, chips like the MMC3 give an interface in which
-programmers can ask the chip to submit an IRQ on a given exact scanline. One
-main usage of this was to allow a top section of the screen to scroll, while
-leaving a small section at the bottom not to scroll. This way, games were no
-longer required to have a status bar at the top and they could have it at the
-bottom. But these chips allow for a lot of flexibility, so programmers can get
-playful with it. One simple example is the roulette mini-game from Super Mario
-Bros. 3. In here the game asks for two scanline IRQs and then the scroll
-direction is changed on each given IRQ. This way, the background is split in
-three sections that move in different directions/speed. Something similar (but
-more simple) has been reproduced in [roulette.s](./roulette.s), giving the
-following result:
+As explained above, chips like the MMC3 give programmers a lot of flexibility
+when it comes to mid-frame customization. That is, chips like the MMC3 give an
+interface in which programmers can ask the chip to submit an IRQ on a given
+exact scanline, multiple times per frame. The main usage for this technique is
+the one explored above in `mmc3.s`, but these chips allow for a lot of
+flexibility, so programmers can get playful with it. One simple example is the
+roulette mini-game from Super Mario Bros. 3. In here the game asks for two
+scanline IRQs and then the scroll direction is changed on each given IRQ. This
+way, the background is split in three sections that move in different
+directions/speed. Something similar (but more simple) has been reproduced in
+[roulette.s](./roulette.s), giving the following result:
 
 <div align="center">
     <img src="../docs/roulette.gif" alt="roulette.gif" />
 </div>
-
-## Expanding to have multiple scrolling directions
-
-TBD: toggle4.s

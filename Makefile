@@ -63,6 +63,9 @@ scroll:
 	$(E) "	CC	 scroll/sprite0"
 	$(Q) $(CC65) $(CCOPTS) scroll/sprite0.s -C config/nrom.cfg -o out/scroll/sprite0.nes
 
+	$(E) "	CC	 scroll/mmc3"
+	$(Q) $(CC65) $(CCOPTS) scroll/mmc3.s -C config/mmc3.cfg -o out/scroll/mmc3.nes
+
 	$(E) "	CC	 scroll/roulette"
 	$(Q) $(CC65) $(CCOPTS) scroll/roulette.s -C config/mmc3.cfg -o out/scroll/roulette.nes
 

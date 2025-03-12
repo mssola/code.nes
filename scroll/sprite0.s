@@ -1,8 +1,8 @@
 ;;;
-;; Show like `level.s` but at the very top of the screen we have a "This is a
-;; message" being shown. This message is part of the background but it does not
-;; scroll like the rest of the screen, but it stays at the same coordinates all
-;; the time. This is done through sprite 0 collision detection, which is a
+;; The same as in `level.s` but at the very top of the screen we have a "This is
+;; a message" being shown. This message is part of the background but it does
+;; not scroll like the rest of the screen, but it stays at the same coordinates
+;; all the time. This is done through sprite 0 collision detection, which is a
 ;; technique is quite often for early games on the NES/Famicom library (e.g.
 ;; Super Mario Bros.).
 ;;

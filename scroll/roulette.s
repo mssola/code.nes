@@ -17,7 +17,7 @@
 ;; mini-game. That being said, usually games used this capability to handle
 ;; scroll on the top part of the screen, and then resetting the scroll on the
 ;; lower part, so they could show a status section (again, as Super Mario Bros.
-;; 3 does inside of a level).
+;; 3 does inside of a level, and in mmc3.s here).
 
 ;; Include helpful definitions.
 .include "../shared/mmc3.s"
@@ -32,9 +32,9 @@
 
 .segment "HEADER"
     .byte 'N', 'E', 'S', $1A
-    .byte $10                   ; 16 * 16 PRG-ROM (256KB)
-    .byte $10                   ; 16 * 8  CHR-ROM (128KB)
-    .byte $42, $08              ; Mapper 4, battery present, iNES 2.0 header
+    .byte $10
+    .byte $10
+    .byte $42, $08
     .res 8, 0
 
 .segment "VECTORS"
