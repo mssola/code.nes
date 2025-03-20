@@ -200,6 +200,7 @@
 
     ;; NOTE: and from here on initialization proceeds as usual.
 
+    bit $2002
 @vblankwait1:
     bit $2002
     bpl @vblankwait1

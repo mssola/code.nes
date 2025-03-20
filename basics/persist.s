@@ -80,6 +80,7 @@
 reset_mmc1:
     inc reset_mmc1
 
+    bit $2002
 @vblankwait1:
     bit $2002
     bpl @vblankwait1

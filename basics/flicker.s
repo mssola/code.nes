@@ -184,6 +184,7 @@
     stx $2001                   ; PPUMASK
     stx $4010                   ; APU DMC
 
+    bit $2002                   ; PPUSTATUS
 @vblankwait1:
     bit $2002                   ; PPUSTATUS
     bpl @vblankwait1

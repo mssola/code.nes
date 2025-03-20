@@ -75,6 +75,7 @@ chr:
     stx $2001
     stx $4010
 
+    bit $2002
 @vblankwait1:
     bit $2002
     bpl @vblankwait1

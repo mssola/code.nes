@@ -155,6 +155,7 @@
     BANK_REGISTER_SET 6, 0
     BANK_REGISTER_SET 7, 1
 
+    bit $2002
 @vblankwait1:
     bit $2002
     bpl @vblankwait1

@@ -174,7 +174,10 @@
     ;; will see how we can take advantage of this when we use the PPU properly
     ;; down the road.
 
-    ;; First of the two waits.
+    ;; First of the two waits. The `bit` outside of the loop is not a typo, but
+    ;; since the VBlank flag is in an unknown state after reset, we clear it now
+    ;; so the next loop does not exit immediately by mistake.
+    bit $2002                   ; PPUSTATUS
 @vblankwait1:
     bit $2002                   ; PPUSTATUS
     bpl @vblankwait1
