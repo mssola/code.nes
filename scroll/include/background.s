@@ -29,7 +29,7 @@
 
     ;; The offset for metatile rows. That is, from where should the engine start
     ;; counting rows of metatiles. By default it's 0, but it could be set to
-    ;; something else to reserve so top space for a HUD or something similar.
+    ;; something else to reserve top space for a HUD or something similar.
     ;;
     ;; NOTE: configurable.
     .ifndef BACKGROUND_ROW_OFFSET

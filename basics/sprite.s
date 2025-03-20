@@ -95,13 +95,18 @@
 ;; main idea is to leave the hardware in a known state and then jump into the
 ;; main game subroutine.
 .proc reset
-    ;; We first instruct the NES to disable everything. That is, we don't want
-    ;; any pesky interrupt to make us jump into the `nmi` section, for example,
-    ;; before we have configured everything.
+    ;; We first instruct the NES/Famicom to disable everything. That is, we
+    ;; don't want any pesky interrupt to make us jump into the `nmi` section,
+    ;; for example, before we have configured everything.
 
-    ;; Ignore IRQs and disable decimal mode (the NES 6502 chip, for copyright
-    ;; issues or legal reasons against MOS that I don't fully know nor care,
-    ;; does not have decimal mode anyway, but it's considered good practice).
+    ;; Ignore IRQs and disable decimal mode. The CPU for the NES/Famicom was
+    ;; developed by Ricoh and it is a modified MOS 6502 processor which, besides
+    ;; adding the APU, also removed the decimal mode from the original MOS 6502
+    ;; processor. The latter was done for obscure reasons (e.g. copyright
+    ;; shenanigans). You can read more about the processor's specifics here:
+    ;; https://www.nesdev.org/wiki/CPU. All of that being said, it's considered
+    ;; good practice to disable decimal mode anyways, and games like Super Mario
+    ;; Bros. followed this practice as well.
     sei
     cld
 
