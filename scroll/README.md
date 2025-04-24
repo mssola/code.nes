@@ -32,12 +32,23 @@ two cases:
 It's easy to miss these points, but from a PPU perspective (and hence from the
 perspective of a programmer interfacing with the PPU), it really makes sense.
 All in all, the scroll register is relative to whatever base nametable is set on
-the control register.
+the control register. Note that games that scrolled diagonally like Super Mario
+Bros. 3 and Kirby's Adventure did not need to do this, since they were
+constantly wrapping on the same nametable. This is a more advanced topic, but it
+boils down to:
 
-Overall, this example looks rather simplistic but some games used this
-technique. For example, in Dropzone it was used to perform some effects on the
-title screen. Hence, performing a simple scroll between two nametables is not
-just for learning purposes, it was also used in real life games.
+1. Setup horizontal mirroring so we can scroll vertically (i.e. contrary to the
+   rest of examples from here).
+2. Mask out the leftmost 8 pixels (see bit 2 in the [PPU Mask
+   register](https://www.nesdev.org/wiki/PPU_registers#PPUMASK)).
+3. The "next" column will be put on the first one, which is always hidden by
+   step 2 and will only be visible when moving the PPU scroll register.
+
+Coming back to this first example, though, the approach being used here looks
+rather simplistic. That being said, some games used this technique. For example,
+in Dropzone it was used to perform some effects on the title screen. Hence,
+performing a simple scroll between two nametables is not just for learning
+purposes, it was also used in real life games.
 
 ## Scrolling multiple screens to the right
 

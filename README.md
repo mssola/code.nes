@@ -1,7 +1,10 @@
-Examples for the Famicom/NES. These examples are not full blown games nor
-standalone projects. Rather, they should be seen as learning material and
-experiments. If you want to check out standalone projects that I have written,
-check out [this list](#other-projects).
+Hacking the Famicom/NES just for the fun of it :)
+
+This repository contains a set of examples and experiments which target the
+Famicom/NES. These examples are not full blown games nor standalone projects.
+Rather, they should be seen as learning material and experiments. If you want to
+check out standalone projects that I have written, check out the list on [Other
+projects](#other-projects).
 
 ## Build
 
@@ -17,7 +20,7 @@ variables to the Makefile.
 After that, it's recommended that you run the ROMs with an emulator with
 debugging support or at least some form of memory visualization. This is because
 some examples have nothing to show for other than updating some values on the
-NES memory. A safe bet is to go with either
+Famicom/NES memory. A safe bet is to go with either
 [fceux](https://fceux.com/web/home.html) or
 [Mesen](https://github.com/SourMesen/Mesen2/), which provide tools like RAM
 watchers or a full debugger.
@@ -26,10 +29,10 @@ watchers or a full debugger.
 
 The examples are distributed like this:
 
-- [basics](./basics/README.md): simple examples which cover basic stuff for NES
-  development. These examples are self-contained and supposed to be read by
-  absolute newcomers. The description for each example is covered by an initial
-  comment on each file.
+- [basics](./basics/README.md): simple examples which cover basic stuff for
+  Famicom/NES development. These examples are self-contained and supposed to be
+  read by absolute newcomers. The description for each example is covered by an
+  initial comment on each file.
 - [space](./space/README.md): example in which you can move a spaceship with
   subpixel movement and shoot bullets. Consider this an evolution from the
   `basics/sprite.s` and `basics/input.s` examples. That is, we are no longer
