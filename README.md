@@ -40,6 +40,7 @@ The examples are distributed like this:
   bullets.
 - [scroll](./scroll/README.md): different scrolling tactics.
 - [fx](./fx/README.md): simple graphical effects that can be pulled off.
+- [rand](./rand/README.md): different strategies for producing random numbers.
 
 ## Other projects
 
