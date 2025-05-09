@@ -61,10 +61,10 @@
 ;; handler, and the IRQ handler. If you look at the configuration from `cc65`
 ;; that was provided on your installation (or if you are pesky enough to create
 ;; one yourself), you will notice that these vector addresses are placed at the
-;; very end of memory ($fffa-ffff). This is not a quirk from the configuration,
-;; but it's a requirement from the architecture of the 6502 processor. Hence,
-;; the NES/Famicom (and emulators) will look at these three last addresses to
-;; know where to jump for each case.
+;; very end of ROM space ($fffa-ffff). This is not a quirk from the
+;; configuration, but it's a requirement from the architecture of the 6502
+;; processor. Hence, the NES/Famicom (and emulators) will look at these three
+;; last addresses to know where to jump for each case.
 .segment "VECTORS"
     .addr nmi
     .addr reset
@@ -75,15 +75,15 @@
 ;; Theoretically there should be a semantical difference between this section
 ;; and "CODE", but as for the linker goes, there is no difference and everything
 ;; will be put sequentially on the resulting binary. Hence, if you want, you can
-;; leave this empty (so to make the default configuration of the linker happy),
-;; and put everything into the "CODE" segment. In fact, according to the Famicom
-;; Party Book (https://famicom.party/book/04-hardwareoverview/), the "STARTUP"
-;; section is only used by C programs compiled down into 6502 assembly, so it
-;; might not be even relevant for assembly programmers (and in fact said book
-;; actually removes this segment in its linker configuration down the road).
-;; This is also removed by the configuration provided in `config/nrom.cfg`,
-;; which is the one being used in the end for this example.
-;; .segment "STARTUP"
+;; define an empty "STARTUP" segment (so to make the default configuration of
+;; the linker happy), and put everything into the "CODE" segment. In fact,
+;; according to the Famicom Party Book
+;; (https://famicom.party/book/04-hardwareoverview/), the "STARTUP" section is
+;; only used by C programs compiled down into 6502 assembly, so it might not be
+;; even relevant for assembly programmers (and in fact said book actually
+;; removes this segment in its linker configuration down the road). This is also
+;; removed by the configuration provided in `config/nrom.cfg`, which is the one
+;; being used in the end for this example. Hence, we jump right into "CODE".
 
 .segment "CODE"
 
@@ -125,11 +125,11 @@
     stx $4017                   ; APU Frame Counter
 
     ;; By the architecture of the 6502 processor, the stack is last-in-first-out
-    ;; (LIFO) and lives at the first page ($100-$1FF). This way the stack
-    ;; register can be an 8-bit register instead of a 16-bit one. Moreover, the
-    ;; stack grows top-down: from $1FF to $100. With all of this at hand, we can
-    ;; simply initialize this register to $FF, which has to be loaded first on
-    ;; the `x` register since `txs` (Transfer X to Stack Pointer) is the only
+    ;; (LIFO) and lives at page 1 ($100-$1FF). This way the stack register can
+    ;; be an 8-bit register instead of a 16-bit one. Moreover, the stack grows
+    ;; top-down: from $1FF to $100. With all of this at hand, we can simply
+    ;; initialize this register to $FF, which has to be loaded first on the `x`
+    ;; register since `txs` (Transfer X to Stack Pointer) is the only
     ;; instruction in standard 6502 assembler which can touch the stack pointer.
     ;;
     ;; As a side note, in more complex scenarios in which you want to squeeze as
@@ -169,9 +169,10 @@
 
     ;; At this point, we have to wait for the PPU to stabilize. This is
     ;; typically done by checking a flag from the PPUSTATUS address ($2002) and
-    ;; waiting until the proper value is set by the PPU. Since this wait can
-    ;; take a while, programmers typically put other initialization code here,
-    ;; like sprite resetting and such.
+    ;; waiting until the proper value is set by the PPU. This happens in two
+    ;; steps, and since this wait can take a while, programmers typically put
+    ;; other initialization code here in between, like sprite resetting and
+    ;; such.
     ;;
     ;; The PPUSTATUS memory address contains general information on the status
     ;; of the PPU, and is read-only. Moreover, reading from the PPUSTATUS has a
@@ -193,12 +194,14 @@
     ;; initialize more stuff.
 
     ;; One typical thing to do is to leave the RAM in a known state. That is, we
-    ;; will set to 0 addresses $0000 - $07FF. Apparently there are some people
-    ;; who say that doing this is bad because it will hide programming mistakes
-    ;; (e.g. bad initialization code). So, if you are one of these people, you
-    ;; can safely remove this loop. Otherwise let's get the RAM clean. That
-    ;; being said, notice that we are skipping $200-$2ff. This is no mistake as
-    ;; you will see below.
+    ;; will set to 0 addresses $0000 - $07FF. Some people say that doing this is
+    ;; bad because it will hide programming mistakes (e.g. bad initialization
+    ;; code). Another scenario in which this might not be desirable is if you
+    ;; are counting on unreliable values from RAM to build up entropy for
+    ;; generating random numbers (i.e. a way to kickstart the random seed).
+    ;;
+    ;; Here we will just get the RAM clean. That being said, notice that we are
+    ;; skipping $200-$2ff. This is no mistake as you will see below.
     ldx #0
     lda #0
 @ram_reset_loop:
