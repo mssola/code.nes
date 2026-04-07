@@ -21,11 +21,11 @@
 .proc clear_screen_y
     bit $2002
 
+    lda #$00
     ldx #$FF
 @loop:
     sty $2006
     stx $2006
-    lda #$00
     sta $2007
 
     dex

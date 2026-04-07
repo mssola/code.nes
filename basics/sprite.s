@@ -430,21 +430,27 @@ palettes:
 ;; into rendering glitches. This is better explained at the `scroll` examples,
 ;; where VRAM buffering techniques are applied and explained.
 .proc init_nametable
-    ;; The general idea here is that the background defaults to the
-    ;; "transparent" color, which is the first color on the palette. Then for
-    ;; the background we only need to store into the PPU those elements which
-    ;; are not the default thing. Hence, if we want to draw a couple of
-    ;; background elements in our game in some positions, we have to instruct
-    ;; the PPU where to put each item and where to find it on the pattern table.
-    ;; After that, we can change/toggle the palette for a background tile if we
-    ;; so want it, and we are done with it.
+    ;; A background screen is contained in what is called a "nametable". The PPU
+    ;; might contain garbage at this point, and hence every game has to go about
+    ;; arranging each nametable in the way they see fit. One brutal way of
+    ;; handling this can be seen in 'shared/clear.s', which just sets the tile
+    ;; $00 to the whole screen. In a real game this is not what you want to do,
+    ;; as it's really expensive, but in this example we go for an even simpler
+    ;; (and wrong) approach: we just set the tiles we care about. This is fine
+    ;; for this simple example, but bear in mind that on real hardware or an
+    ;; emulator with randomized memory things will be a bit weird on screen.
+    ;;
+    ;; Anyways, if we want to draw a couple of background elements in our game
+    ;; in some positions, we have to instruct the PPU where to put each item and
+    ;; where to find it on the pattern table. After that, we can change/toggle
+    ;; the palette for a background tile if we so want it, and we are done with
+    ;; it.
 
-    ;; Anyways, before loading data into the PPU, we always have to check the
-    ;; PPUSTATUS, that's why the first instruction of each block is a `bit
-    ;; $2002`. This is a safe-guard so to reset the "address latch". That is, if
-    ;; instead of writing two consecutive bytes we only wrote one by mistake (or
-    ;; because we only wanted to write the high byte), it resets back its
-    ;; internal index.
+    ;; Before loading data into the PPU, we always have to check the PPUSTATUS,
+    ;; that's why the first instruction of each block is a `bit $2002`. This is
+    ;; a safe-guard so to reset the "address latch". That is, if instead of
+    ;; writing two consecutive bytes we only wrote one by mistake (or because we
+    ;; only wanted to write the high byte), it resets back its internal index.
 
     bit $2002                   ; PPUSTATUS
 
