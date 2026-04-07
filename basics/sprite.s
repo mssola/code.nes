@@ -110,13 +110,22 @@
     sei
     cld
 
-    ;; Disable APU frame IRQ. This is the first instance we see of Memory-Mapped
-    ;; I/O. This is a core concept in NES programming and, to sum things up, the
-    ;; memory range $2000-$5FFF is reserved to I/O operations, and each address
-    ;; is reserved to a specific hardware operation. This is because the NES CPU
-    ;; doesn't directly control the PPU nor other chips. In this case, ranges
-    ;; $4000-$4017 control the APU (Audio Processing Unit). More precisely, the
-    ;; $4017 address controls what is called the "Frame counter" from the APU
+    ;; Disable APU frame IRQ.
+    ;;
+    ;; This is the first instance we see of Memory-Mapped I/O. This is a core
+    ;; concept in NES programming and, to sum things up, the memory range
+    ;; $2000-$5FFF is reserved to I/O operations, where each address is reserved
+    ;; to a specific hardware operation. This is a wide range of addresses for a
+    ;; small set of registers that can actually be touched. But this is because
+    ;; on how the NES CPU is wired with the other chips and how "chip select"
+    ;; cables were layed out. I've found the following video useful to grasp
+    ;; this visually: https://youtu.be/lkJwpdw57lo?si=rNZhIzC3Gnf9ZU7A. In
+    ;; retrospect it feels like a big waste of addressing space, but this is how
+    ;; it is.
+    ;;
+    ;; Anyways, in this case ranges $4000-$4017 control the APU (Audio
+    ;; Processing Unit). More precisely, the $4017 address controls what is
+    ;; called the "Frame counter" from the APU
     ;; (https://www.nesdev.org/wiki/APU#Frame_Counter_($4017)). Setting #$40 to
     ;; it disables it completely, so we are in a known state. If we were to use
     ;; sound, at the end of the reset code we should enable it back. We do *not*
