@@ -490,7 +490,7 @@ palettes:
 
     ;; Now we have to do the same for the rest of the elements. I have gone
     ;; through the same process of fetching the offset from a canvas I drew on
-    ;; NEXXT and here's the result. Instead of repeating te same code over and
+    ;; NEXXT and here's the result. Instead of repeating the same code over and
     ;; over but with slightly different values, I am using the WRITE_PPU_DATA
     ;; from `shared/ppu.s` to do the same.
     WRITE_PPU_DATA $20B9, $04
@@ -522,6 +522,22 @@ palettes:
     ;; background element resides in. In this case it's the first square, so we
     ;; just need to assign $01 to the bits reserved to this square if I want to
     ;; change the palette to 1. This is what we pass as a value.
+    ;;
+    ;; Let me reiterate: this design of attribute tables/offsets means that
+    ;; background palettes need to be changed at a 4-tile basis. This is
+    ;; important as designers need to lay out the background in a way that two
+    ;; elements which need different palettes are not contained into this 4-tile
+    ;; square. Knowing this, you will be able to understand why isometric view
+    ;; games had some visual troubles here and there, and also why games like
+    ;; Super Mario Bros. 3 sometimes have a weird glitchy color at the right
+    ;; edge of the screen which is easy to spot on a non-CRT television (even if
+    ;; the whole explanation is also about how scrolling was managed on these
+    ;; kinds of diagonally-scrolled games). As an extra piece of information,
+    ;; the MMC5 mapper chip, among many other things, added extra memory so
+    ;; programmers could allocate space for attributes tables and index palettes
+    ;; at a tile level instead of this 4-tile squares. The MMC5 mapper chip was
+    ;; quite complex and came late to the party, so not a lot of games used it
+    ;; (e.g. Castlevania 3).
     WRITE_PPU_DATA $23CE, %00000001
 
     rts
