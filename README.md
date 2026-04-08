@@ -39,6 +39,7 @@ The examples are distributed like this:
   just showing a sprite, but we make it move and perform an action like shooting
   bullets.
 - [scroll](./scroll/README.md): different scrolling tactics.
+- [sound](./sound/README.md): making the NES/Famicom beep-beep and stuff.
 - [fx](./fx/README.md): simple graphical effects that can be pulled off.
 - [rand](./rand/README.md): different strategies for producing random numbers.
 

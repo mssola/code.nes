@@ -20,3 +20,11 @@
 .macro JAL ADDR
     jmp ADDR
 .endmacro
+
+;; The __fallthrough__ special statement allows developers to explicitly tell
+;; the assembler that a "fall through" situation does not happen by mistake.
+.ifndef __NASM__
+  .macro __fallthrough__ arg
+    ;; NOTE: nothing to do :)
+  .endmacro
+.endif

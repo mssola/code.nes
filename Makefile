@@ -18,14 +18,14 @@ clean:
 	@rm -rf out
 	@find . -type f -name "*.o" -delete
 	@find . -type f -name "*.nes" -delete
-	@mkdir -p out/basics out/scroll out/space out/fx out/rand
+	@mkdir -p out/basics out/scroll out/space out/fx out/rand out/sound
 
 .PHONY: deps
 deps:
 	@which $(CC65) >/dev/null 2>/dev/null || (echo "ERROR: $(CC65) not found." && false)
 
 .PHONY: build
-build: basics space scroll fx rand
+build: basics space scroll sound fx rand
 
 .PHONY: basics
 basics:
@@ -68,6 +68,11 @@ scroll:
 
 	$(E) "	CC	 scroll/roulette"
 	$(Q) $(CC65) $(CCOPTS) scroll/roulette.s -C config/mmc3.cfg -o out/scroll/roulette.nes
+
+.PHONY: sound
+sound:
+	$(E) "	CC	 sound/beep"
+	$(Q) $(CC65) $(CCOPTS) sound/beep.s -C config/nrom.cfg -o out/sound/beep.nes
 
 .PHONY: fx
 fx:

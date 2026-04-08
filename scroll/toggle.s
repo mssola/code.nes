@@ -31,7 +31,6 @@
 .include "./include/ppu.s"
 .include "./include/oam.s"
 .include "./include/globals.s"
-.include "../shared/ppu.s"
 .include "../shared/clear.s"
 
 ;; Variables used on this example.
