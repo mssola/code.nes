@@ -77,6 +77,9 @@ sound:
 	$(E) "	CC	 sound/select"
 	$(Q) $(CC65) $(CCOPTS) sound/select.s -C config/nrom.cfg -o out/sound/select.nes
 
+	$(E) "	CC	 sound/scale"
+	$(Q) $(CC65) $(CCOPTS) sound/scale.s -C config/nrom.cfg -o out/sound/scale.nes
+
 .PHONY: fx
 fx:
 	$(E) "	CC	 fx/blink"
