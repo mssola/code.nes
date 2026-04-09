@@ -74,6 +74,9 @@ sound:
 	$(E) "	CC	 sound/beep"
 	$(Q) $(CC65) $(CCOPTS) sound/beep.s -C config/nrom.cfg -o out/sound/beep.nes
 
+	$(E) "	CC	 sound/select"
+	$(Q) $(CC65) $(CCOPTS) sound/select.s -C config/nrom.cfg -o out/sound/select.nes
+
 .PHONY: fx
 fx:
 	$(E) "	CC	 fx/blink"
