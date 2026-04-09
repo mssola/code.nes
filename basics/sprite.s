@@ -127,9 +127,7 @@
     ;; Processing Unit). More precisely, the $4017 address controls what is
     ;; called the "Frame counter" from the APU
     ;; (https://www.nesdev.org/wiki/APU#Frame_Counter_($4017)). Setting #$40 to
-    ;; it disables it completely, so we are in a known state. If we were to use
-    ;; sound, at the end of the reset code we should enable it back. We do *not*
-    ;; do it here because we don't need it.
+    ;; it disables it completely, so we are in a known state.
     ldx #$40
     stx $4017                   ; APU Frame Counter
 
@@ -156,8 +154,7 @@
     ;; the value then stored in the aforementioned memory locations.
     ;;
     ;; The one on $4010 refers again to the APU (as described before), and it
-    ;; directly controls the DMC. Again, if you wanted sound, you should enable
-    ;; this back after the whole reset block.
+    ;; directly controls the DMC.
     ;;
     ;; On the other side, the low addresses of $2000 control the PPU. In
     ;; particular, we disable NMIs from the PPU by setting the PPUCTRL address
