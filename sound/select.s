@@ -152,6 +152,34 @@
     lda #$00
     sta APU::m_triangle_high
 
+    ;; The noise channel produces noise with a pseudo-random bit generator. Its
+    ;; envelope register is pretty much the same as with the square channels,
+    ;; but the two most significant bits are unused as "duty" is, like with the
+    ;; triangle channel, not a thing on this context.
+    lda #%00110000
+    sta APU::m_noise_envelope
+
+    ;; NOTE: address $400D is unused from the APU.
+
+    ;; You then configure the mode of noise by writing to the $400E address. In the
+    ;; low nibble you configure the "noise period", which in turn is the index
+    ;; for a table that the APU will use as the real noise period (see:
+    ;; https://www.nesdev.org/wiki/APU_Noise for specifics). Finally, only the
+    ;; most significant bit is used on the high nibble, which sets the
+    ;; "mode". Long story short, it dramatically shortens the period if set,
+    ;; which will give you a more "metallic" sound. Change the current value
+    ;; from "$0A" to "$8A" and test it by yourself ;-)
+    lda #$0A
+    sta APU::m_noise_mode
+
+    ;; Finally, there is the counter register for the noise channel. Given that
+    ;; we have disabled when we configured 'APU::m_noise_envelope', you'd think
+    ;; that you wouldn't have to touch it, but you'd be wrong. This register
+    ;; needs to be written at least once so to trigger the enablement of this
+    ;; channel. We do it now with a zero value, which also does the trick.
+    lda #0
+    sta APU::m_noise_counter
+
     cli
     lda #%10001000
     sta PPU::m_control
@@ -193,6 +221,17 @@
     lda #%10000000
 @set_triangle:
     sta APU::m_triangle_control
+
+    ;; Mute/Play the noise channel
+    lda Joypad::zp_buttons1
+    and #%00010000
+    beq @reset_noise
+    lda #%00111000
+    bne @set_noise
+@reset_noise:
+    lda #%00110000
+@set_noise:
+    sta APU::m_noise_envelope
 
     ;; NOTE: done :)
 
