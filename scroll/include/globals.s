@@ -1,7 +1,7 @@
 ;; Global variables used throughout the code base.
 .scope Globals
     ;;;
-    ;; Argument values as defined in https://github.com/mssola/style.nes. Note
+    ;; Argument values as defined in https://git.mssola.com/nes/style.nes. Note
     ;; that these variables can also be used as temporary variables.
     zp_arg0 = $90
     zp_arg1 = $91

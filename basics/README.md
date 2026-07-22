@@ -54,7 +54,7 @@ aware about the priorities of your game:
    the player's convenience.
 2. Is there a way to lay out the OAM memory in a way in which we always get the
    proper results without having to re-arrange objects on the OAM? Imagine a
-   very simple game such as [jetpac.nes](https://github.com/mssola/jetpac.nes),
+   very simple game such as [jetpac.nes](https://git.mssola.com/nes/jetpac.nes),
    in which we know in advance the slots for enemies, bonuses, etc.
 
 ## Showing a sprite through CHR-RAM instead of CHR-ROM
@@ -84,7 +84,7 @@ have the foundations for `chr-ram.s`, which will use one of the banks for the
 assets, and then upon initialization move it to RAM. The result is the same as
 with `sprite.s`, but the goal of this example is to appreciate the technique and
 understand when it's useful.
-  
+
 ## Persisting memory
 
 Another area explored here is a way to persist data across runs. This was

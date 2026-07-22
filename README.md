@@ -13,9 +13,9 @@ available in the `out` directory. Before doing that, though, you will need a
 compiler for the 6502 platform. A good option is
 [cc65](https://github.com/cc65/cc65), which is available on all major platforms,
 and if you are feeling adventurous you can check out
-[nasm](https://github.com/mssola/tools.nes). By default the Makefile uses `cc65`
-but if you want to use another compiler you can pass the `CC65` and `CCOPTS`
-variables to the Makefile.
+[nasm](https://git.mssola.com/nes/tools.nes). By default the Makefile uses
+`cc65` but if you want to use another compiler you can pass the `CC65` and
+`CCOPTS` variables to the Makefile.
 
 After that, it's recommended that you run the ROMs with an emulator with
 debugging support or at least some form of memory visualization. This is because
@@ -45,11 +45,11 @@ The examples are distributed like this:
 
 ## Other projects
 
-- Full games: [jetpac.nes](https://github.com/mssola/jetpac.nes).
-- Libraries: [list.nes](https://github.com/mssola/list.nes).
-- Misc: [Advent of Code 2023](https://github.com/mssola/aoc2023.nes).
-- Tooling: [tools.nes](https://github.com/mssola/tools.nes).
-- [Code style](https://github.com/mssola/style.nes) that I'm trying to follow here.
+- Full games: [jetpac.nes](https://git.mssola.com/nes/jetpac.nes).
+- Libraries: [list.nes](https://git.mssola.com/nes/list.nes).
+- Misc: [Advent of Code 2023](https://git.mssola.com/nes/aoc2023.nes).
+- Tooling: [tools.nes](https://git.mssola.com/nes/tools.nes).
+- [Code style](https://git.mssola.com/nes/style.nes) that I'm trying to follow here.
 
 ## License
 
