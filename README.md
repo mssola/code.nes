@@ -42,6 +42,7 @@ The examples are distributed like this:
 - [sound](./sound/README.md): making the NES/Famicom beep-beep and stuff.
 - [fx](./fx/README.md): simple graphical effects that can be pulled off.
 - [rand](./rand/README.md): different strategies for producing random numbers.
+- [asm](./asm/README.md): special tricks with 6502 assembly.
 
 ## Other projects
 
